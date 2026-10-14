@@ -59,11 +59,21 @@ function crearSombraFalsa(textura: Texture): Mesh {
   return sombra;
 }
 
+export interface LucesEstudio {
+  readonly spot: SpotLight;
+  readonly ambiente: HemisphereLight;
+}
+
+export interface Estudio {
+  readonly fundas: readonly FundaEnRepisa[];
+  readonly luces: LucesEstudio;
+}
+
 /** Arma la habitación, la luz, la repisa y las fundas; deja la cámara en la vista general. */
 export function construirEstudio(
   { escena, camara }: Escena3d,
   calidad: ConfiguracionCalidad,
-): readonly FundaEnRepisa[] {
+): Estudio {
   const texturas = crearTexturasEstudio(calidad.ladoTextura);
   const ambiente = new HemisphereLight(
     new Color(leerToken('--estudio-ambiente')),
@@ -79,5 +89,5 @@ export function construirEstudio(
   }
   camara.position.set(CAMARA_GENERAL.x, CAMARA_GENERAL.y, CAMARA_GENERAL.z);
   camara.lookAt(0, CAMARA_GENERAL.mirarY, 0);
-  return fundas;
+  return { fundas, luces: { spot, ambiente } };
 }

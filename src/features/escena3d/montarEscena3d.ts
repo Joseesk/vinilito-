@@ -1,8 +1,9 @@
-import { emitir } from '../../shared/eventos';
+import { emitir, escuchar } from '../../shared/eventos';
 import { crearElemento } from '../../shared/utils';
 import type { ConfiguracionCalidad } from './calidad';
 import { crearCapaAccesible } from './capaAccesible';
 import { construirEstudio } from './crearEstudio';
+import { animarIntro3d } from './intro3d';
 import { crearEscena3d, type Escena3d } from './renderizador';
 import type { FundaEnRepisa } from './ubicarFundas';
 
@@ -30,7 +31,7 @@ export function montarEscena3d(
   });
   contenedor.prepend(lienzo, vineta);
   const escena3d = crearEscena3d(lienzo, calidad);
-  const fundas = construirEstudio(escena3d, calidad);
+  const { fundas, luces } = construirEstudio(escena3d, calidad);
   const capa = crearCapaAccesible({ ...escena3d, fundas });
   contenedor.append(capa.nav);
   escena3d.alRedimensionar(capa.ubicar);
@@ -41,5 +42,9 @@ export function montarEscena3d(
     contenedor.dataset['escena3d'] = 'lista';
     emitir('escena3d:lista');
   });
+  // Los `from()` aplican el estado inicial (luz apagada) antes del primer cuadro
+  const intro = animarIntro3d({ luces, fundas, solicitarRender: escena3d.solicitarRender });
+  // Si se abre un disco durante la intro, se completa ya: las fundas tienen que estar en su lugar
+  escuchar('vinilo:abriendo', () => intro.progress(1));
   return { escena3d, fundas };
 }
