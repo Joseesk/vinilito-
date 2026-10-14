@@ -1,0 +1,27 @@
+:root {
+  /* Colores */
+  --bg: #1e1712;
+  --floor: #2c221b;
+  --cream: #f2e8d5;
+  --mustard: #d9a441;
+  --terracotta: #c8553d;
+  --olive: #7a8b3d;
+  --burgundy: #7b2d3b;
+  --ink: #14100d;
+  --side-shade: rgba(0, 0, 0, 0.35);
+  --vinyl: #111;
+
+  /* Tipografia */
+  --fuente-titulo: 'Syne', system-ui, sans-serif;
+  --fuente-texto: 'Space Grotesk', system-ui, sans-serif;
+  --peso-titulo: 800;
+  --peso-texto: 400;
+  --peso-texto-medio: 500;
+
+  /* Espacios */
+  --espacio-xs: 0.25rem;
+  --espacio-s: 0.5rem;
+  --espacio-m: 1rem;
+  --espacio-l: 2rem;
+  --espacio-xl: 4rem;
+}
