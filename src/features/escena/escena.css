@@ -1,0 +1,91 @@
+.escena {
+  --altura-piso: 22svh;
+  --altura-base-lomo: 44svh;
+  --paso-altura-lomo: 6svh;
+  --ancho-lomo: clamp(4.5rem, 8vw, 7.5rem);
+  --profundidad-lomo: clamp(3rem, 6vw, 6rem);
+  --giro-escena: -28deg;
+
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  min-height: 100svh;
+  padding-bottom: var(--altura-piso);
+  perspective: 1600px;
+  overflow: hidden;
+  background: linear-gradient(
+    to top,
+    var(--floor) var(--altura-piso),
+    var(--bg) var(--altura-piso)
+  );
+}
+
+.escena__lomos {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--espacio-l);
+  transform-style: preserve-3d;
+  transform: rotateY(var(--giro-escena));
+}
+
+.lomo {
+  position: relative;
+  display: block;
+  width: var(--ancho-lomo);
+  height: calc(var(--altura-base-lomo) + var(--paso-altura-lomo) * var(--indice));
+  transform-style: preserve-3d;
+}
+
+.lomo__cuerpo {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+
+.lomo__frente {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--espacio-m) var(--espacio-s);
+  background: var(--color-lomo);
+  color: var(--color-texto);
+}
+
+.lomo__titulo {
+  writing-mode: vertical-rl;
+  /* Lectura de abajo hacia arriba, como el lomo de un disco */
+  transform: rotate(180deg);
+  font-weight: var(--peso-texto-medio);
+  font-size: clamp(0.75rem, 1.2vw, 1rem);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.lomo__numero {
+  font-family: var(--fuente-titulo);
+  font-weight: var(--peso-titulo);
+  font-size: clamp(3rem, 7vw, 6.5rem);
+  line-height: 0.8;
+}
+
+/* Cara lateral: se pliega 90° hacia atrás desde el borde derecho */
+.lomo__lado {
+  position: absolute;
+  top: 0;
+  left: 100%;
+  width: var(--profundidad-lomo);
+  height: 100%;
+  background: var(--color-lomo);
+  transform-origin: left center;
+  transform: rotateY(90deg);
+}
+
+.lomo__lado::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--side-shade);
+}
