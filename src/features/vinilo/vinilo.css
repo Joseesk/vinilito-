@@ -3,7 +3,10 @@
   position: fixed;
   inset: 0;
   display: grid;
-  place-items: center;
+  /* Disco a la izquierda: la ficha ocupa la derecha */
+  align-items: center;
+  justify-items: start;
+  padding-left: calc(var(--espacio-xl) * 2);
   pointer-events: none;
   visibility: hidden;
   opacity: 0;

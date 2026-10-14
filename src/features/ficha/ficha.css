@@ -1,0 +1,66 @@
+/* Panel fijo a la derecha; el disco ocupa la izquierda (ver vinilo.css) */
+.ficha {
+  position: fixed;
+  /* Centrado vertical sin transform: GSAP usa transform para la entrada */
+  inset-block: 0;
+  right: var(--espacio-xl);
+  width: min(26rem, 34vw);
+  height: fit-content;
+  margin-block: auto;
+  background: var(--cream);
+  color: var(--ink);
+  visibility: hidden;
+}
+
+.ficha__cabecera {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--espacio-m);
+  padding: var(--espacio-m) var(--espacio-l);
+  background: var(--color-ficha);
+  color: var(--color-texto-ficha);
+}
+
+.ficha__numero {
+  font-family: var(--fuente-titulo);
+  font-weight: var(--peso-titulo);
+  font-size: 4rem;
+  line-height: 0.8;
+}
+
+.ficha__anio {
+  font-weight: var(--peso-texto-medio);
+  letter-spacing: 0.08em;
+}
+
+.ficha__cerrar {
+  margin-left: auto;
+  align-self: flex-start;
+  width: 2.5rem;
+  height: 2.5rem;
+  font-size: 1.75rem;
+  line-height: 1;
+}
+
+.ficha__cuerpo {
+  display: grid;
+  gap: var(--espacio-m);
+  padding: var(--espacio-l);
+}
+
+.ficha__titulo {
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  text-transform: uppercase;
+}
+
+.ficha__enlace {
+  justify-self: start;
+  font-weight: var(--peso-texto-medio);
+  text-underline-offset: 0.2em;
+}
+
+.ficha__cerrar:focus-visible,
+.ficha__enlace:focus-visible {
+  outline: 3px solid currentColor;
+  outline-offset: var(--espacio-xs);
+}
