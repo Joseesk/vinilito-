@@ -8,7 +8,6 @@
   --inclinacion-ultimo: -6deg;
   --inclinacion-cartel: -2deg;
   --subida-hover: -0.75rem;
-  --duracion-hover: 0.25s;
 
   position: relative;
   display: grid;
@@ -214,31 +213,9 @@
   font-size: 0.875rem;
 }
 
-/* Botón neobrutal: al presionar "se aplasta" contra su sombra (solo se anima transform) */
-.cartel__enlace {
-  display: inline-block;
-  padding: var(--espacio-xs) var(--espacio-s);
-  background: var(--papel);
-  border: var(--borde);
-  box-shadow: 3px 3px 0 var(--tinta);
-  font-weight: var(--peso-texto-medio);
-  text-decoration: none;
-  transition: transform var(--duracion-hover) ease-out;
-}
-
-.cartel__enlace:hover {
-  background: var(--disco-9);
-}
-
-.cartel__enlace:active {
-  box-shadow: none;
-  transform: translate(3px, 3px);
-}
-
 @media (prefers-reduced-motion: reduce) {
   .lomo__cuerpo,
-  .lomo__cuerpo::after,
-  .cartel__enlace {
+  .lomo__cuerpo::after {
     transition: none;
   }
 }

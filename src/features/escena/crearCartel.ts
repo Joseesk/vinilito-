@@ -7,7 +7,9 @@ function crearEnlace(etiqueta: string, url: string): HTMLLIElement {
     ? { href: url, target: '_blank', rel: 'noopener noreferrer' }
     : { href: url };
   return crearElemento('li', {
-    hijos: [crearElemento('a', { clases: ['cartel__enlace'], texto: etiqueta, atributos })],
+    hijos: [
+      crearElemento('a', { clases: ['cartel__enlace', 'boton'], texto: etiqueta, atributos }),
+    ],
   });
 }
 

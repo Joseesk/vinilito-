@@ -9,6 +9,8 @@
   margin-block: auto;
   background: var(--papel);
   color: var(--tinta);
+  border: var(--borde);
+  box-shadow: var(--sombra);
   visibility: hidden;
 }
 
@@ -19,6 +21,7 @@
   padding: var(--espacio-m) var(--espacio-l);
   background: var(--color-ficha);
   color: var(--tinta);
+  border-bottom: var(--borde);
 }
 
 .ficha__numero {
@@ -28,7 +31,11 @@
   line-height: 0.8;
 }
 
+/* Año como etiqueta, igual que el rol del cartel */
 .ficha__anio {
+  padding: 0 var(--espacio-xs);
+  background: var(--papel);
+  border: var(--borde);
   font-weight: var(--peso-texto-medio);
   letter-spacing: 0.08em;
 }
@@ -38,7 +45,8 @@
   align-self: flex-start;
   width: 2.5rem;
   height: 2.5rem;
-  font-size: 1.75rem;
+  padding: 0;
+  font-size: 1.5rem;
   line-height: 1;
 }
 
@@ -53,10 +61,11 @@
   text-transform: uppercase;
 }
 
+/* Acción principal: el color del disco la distingue del botón cerrar */
 .ficha__enlace {
   justify-self: start;
-  font-weight: var(--peso-texto-medio);
-  text-underline-offset: 0.2em;
+  padding: var(--espacio-s) var(--espacio-m);
+  background: var(--color-ficha);
 }
 
 /* El panel recibe foco por código solo para anunciarse; no es interactivo */

@@ -47,6 +47,31 @@ a {
   color: inherit;
 }
 
+/* Botón neobrutal: al presionar "se aplasta" contra su sombra (solo se anima transform) */
+.boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--espacio-xs);
+  padding: var(--espacio-xs) var(--espacio-s);
+  background: var(--papel);
+  color: var(--tinta);
+  border: var(--borde);
+  box-shadow: var(--sombra-chica);
+  font-weight: var(--peso-texto-medio);
+  text-decoration: none;
+  transition: transform var(--duracion-hover) ease-out;
+}
+
+.boton:hover {
+  background: var(--disco-9);
+}
+
+.boton:active {
+  box-shadow: none;
+  transform: translate(var(--desfase-sombra-chica), var(--desfase-sombra-chica));
+}
+
 /* currentColor: el contorno contrasta sobre cualquier fondo (cartel, ficha, cabeceras) */
 a:focus-visible,
 button:focus-visible {

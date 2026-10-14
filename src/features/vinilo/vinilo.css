@@ -30,6 +30,11 @@
 .vinilo {
   position: absolute;
   inset: 3%;
+  /* Borde y sombra dura en el contenedor que NO gira: si estuvieran en el disco, la sombra
+     daría vueltas con él */
+  border: var(--borde);
+  border-radius: 50%;
+  box-shadow: var(--sombra);
   /* Oculto hasta que la funda llega (lo muestra la apertura) */
   visibility: hidden;
   opacity: 0;
@@ -86,7 +91,6 @@
     /* Surcos */ repeating-radial-gradient(circle, var(--vinyl) 0 2px, var(--vinyl-groove) 3px 4px);
   /* Base sólida: los surcos son semitransparentes y sin esto se ve la escena a través */
   background-color: var(--vinyl);
-  box-shadow: 0 var(--espacio-m) var(--espacio-xl) var(--side-shade);
   /* Capa propia: girar no repinta los gradientes en cada frame */
   will-change: transform;
 }
@@ -98,6 +102,7 @@
   place-items: center;
   overflow: hidden;
   border-radius: 50%;
+  border: var(--borde);
   background: var(--color-disco);
 }
 

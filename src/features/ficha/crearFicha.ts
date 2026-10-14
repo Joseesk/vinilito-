@@ -10,7 +10,7 @@ function crearCabecera(proyecto: Proyecto): HTMLDivElement {
       crearElemento('span', { clases: ['ficha__numero'], texto: String(proyecto.numero) }),
       crearElemento('span', { clases: ['ficha__anio'], texto: String(proyecto.anio) }),
       crearElemento('button', {
-        clases: ['ficha__cerrar'],
+        clases: ['ficha__cerrar', 'boton'],
         texto: '×',
         atributos: { type: 'button', 'aria-label': 'Cerrar proyecto' },
       }),
@@ -29,7 +29,7 @@ function crearCuerpo(proyecto: Proyecto): HTMLDivElement {
       }),
       crearElemento('p', { clases: ['ficha__descripcion'], texto: proyecto.descripcion }),
       crearElemento('a', {
-        clases: ['ficha__enlace'],
+        clases: ['ficha__enlace', 'boton'],
         texto: 'Ver proyecto →',
         atributos: { href: proyecto.enlace, target: '_blank', rel: 'noopener noreferrer' },
       }),
