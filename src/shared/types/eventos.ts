@@ -27,6 +27,8 @@ export interface EventosApp {
   /** Los emite el animador activo (CSS o 3D) al terminar: el estado no conoce la animación. */
   'animacion:abierta': PayloadProyecto;
   'animacion:cerrada': PayloadProyecto;
+  /** El estudio 3D ya dibujó: la escena CSS cede la repisa (queda el cartel). */
+  'escena3d:lista': undefined;
 }
 
 export type NombreEvento = keyof EventosApp;

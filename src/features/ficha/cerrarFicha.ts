@@ -2,17 +2,19 @@ import { emitir } from '../../shared/eventos';
 import { obtenerElemento } from '../../shared/utils';
 
 /**
- * Un click en un lomo no cuenta como "fuera": lo resuelve la máquina de estados
- * del vinilo (mismo lomo = cerrar, otro = cambiar de proyecto).
+ * Un click en un disparador de proyecto (lomo CSS o botón del estudio 3D: ambos llevan
+ * `aria-expanded`) no cuenta como "fuera": lo resuelve la máquina de estados del vinilo
+ * (mismo lomo = cerrar, otro = cambiar de proyecto). Además ese mismo click es el que abrió
+ * la ficha y sigue subiendo hasta `document` cuando este listener ya está registrado.
  */
-const SELECTOR_LOMO = '.lomo';
+const SELECTOR_DISPARADOR = '[aria-expanded]';
 
 function esClickFuera(evento: MouseEvent, ficha: HTMLElement): boolean {
   const destino = evento.target;
   if (!(destino instanceof Element)) {
     return false;
   }
-  return !ficha.contains(destino) && destino.closest(SELECTOR_LOMO) === null;
+  return !ficha.contains(destino) && destino.closest(SELECTOR_DISPARADOR) === null;
 }
 
 /** Botón, `Esc` y click fuera piden cerrar. Devuelve la función que quita los listeners. */

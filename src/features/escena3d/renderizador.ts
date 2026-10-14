@@ -6,10 +6,8 @@ import {
   Scene,
   WebGLRenderer,
 } from 'three';
-import { crearElemento, leerToken } from '../../shared/utils';
+import { leerToken } from '../../shared/utils';
 import type { ConfiguracionCalidad } from './calidad';
-import { construirEstudio } from './crearEstudio';
-import type { FundaEnRepisa } from './ubicarFundas';
 
 /** Lente algo tele: una repisa vista de frente se deforma menos que con gran angular. */
 const CAMPO_VISION = 35;
@@ -21,8 +19,11 @@ const EXPOSICION = 0.85;
 export interface Escena3d {
   readonly escena: Scene;
   readonly camara: PerspectiveCamera;
+  readonly lienzo: HTMLCanvasElement;
   /** Pide un cuadro. Varios pedidos en el mismo frame se dibujan una sola vez. */
   readonly solicitarRender: () => void;
+  /** Avisa cada cambio de tamaño del lienzo (después de ajustar cámara y renderer). */
+  readonly alRedimensionar: (accion: () => void) => void;
   readonly destruir: () => void;
 }
 
@@ -42,13 +43,9 @@ function crearRenderer(canvas: HTMLCanvasElement, calidad: ConfiguracionCalidad)
 }
 
 /** Render a demanda: nada se dibuja si nada cambió (ahorra batería en celulares). */
-function crearEscena3d(canvas: HTMLCanvasElement, calidad: ConfiguracionCalidad): Escena3d {
-  const renderer = crearRenderer(canvas, calidad);
-  const escena = new Scene();
-  escena.background = new Color(leerToken('--estudio-pared'));
-  const camara = new PerspectiveCamera(CAMPO_VISION, 1, PLANO_CERCANO, PLANO_LEJANO);
+function crearDibujante(dibujar: () => void): () => void {
   let hayPedido = false;
-  const solicitarRender = (): void => {
+  return () => {
     if (hayPedido) {
       return;
     }
@@ -56,49 +53,32 @@ function crearEscena3d(canvas: HTMLCanvasElement, calidad: ConfiguracionCalidad)
     // rAF no corre con la pestaña oculta: el pedido queda en espera sin gastar nada
     requestAnimationFrame(() => {
       hayPedido = false;
-      renderer.render(escena, camara);
+      dibujar();
     });
   };
-  const ajustarTamanio = (): void => {
-    renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
-    camara.aspect = canvas.clientWidth / Math.max(canvas.clientHeight, 1);
+}
+
+export function crearEscena3d(lienzo: HTMLCanvasElement, calidad: ConfiguracionCalidad): Escena3d {
+  const renderer = crearRenderer(lienzo, calidad);
+  const escena = new Scene();
+  escena.background = new Color(leerToken('--estudio-pared'));
+  const camara = new PerspectiveCamera(CAMPO_VISION, 1, PLANO_CERCANO, PLANO_LEJANO);
+  const solicitarRender = crearDibujante(() => renderer.render(escena, camara));
+  const acciones: (() => void)[] = [];
+  const observador = new ResizeObserver(() => {
+    renderer.setSize(lienzo.clientWidth, lienzo.clientHeight, false);
+    camara.aspect = lienzo.clientWidth / Math.max(lienzo.clientHeight, 1);
     camara.updateProjectionMatrix();
+    acciones.forEach((accion) => accion());
     solicitarRender();
-  };
-  const observador = new ResizeObserver(ajustarTamanio);
-  observador.observe(canvas);
+  });
+  observador.observe(lienzo);
   const destruir = (): void => {
     observador.disconnect();
     renderer.dispose();
   };
-  return { escena, camara, solicitarRender, destruir };
-}
-
-export interface EstudioMontado {
-  readonly escena3d: Escena3d;
-  readonly fundas: readonly FundaEnRepisa[];
-}
-
-/** Punto de entrada del chunk dinámico. Marca el contenedor cuando ya hay un cuadro dibujado. */
-export function montarEscena3d(
-  contenedor: HTMLElement,
-  calidad: ConfiguracionCalidad,
-): EstudioMontado {
-  const canvas = crearElemento('canvas', {
-    clases: ['escena3d'],
-    atributos: { 'aria-hidden': 'true', 'data-calidad': calidad.nivel },
-  });
-  const vineta = crearElemento('div', {
-    clases: ['escena3d__vineta'],
-    atributos: { 'aria-hidden': 'true' },
-  });
-  contenedor.prepend(canvas, vineta);
-  const escena3d = crearEscena3d(canvas, calidad);
-  const fundas = construirEstudio(escena3d, calidad);
-  escena3d.solicitarRender();
-  // Se registra después del render pedido: en el mismo frame corre justo detrás de él
-  requestAnimationFrame(() => {
-    contenedor.dataset['escena3d'] = 'lista';
-  });
-  return { escena3d, fundas };
+  const alRedimensionar = (accion: () => void): void => {
+    acciones.push(accion);
+  };
+  return { escena, camara, lienzo, solicitarRender, alRedimensionar, destruir };
 }

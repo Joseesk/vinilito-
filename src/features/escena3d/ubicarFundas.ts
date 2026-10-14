@@ -16,6 +16,11 @@ export interface FundaEnRepisa {
   readonly id: string;
   /** Esquina inferior izquierda de la funda, apoyada en la tabla: el giro pivota ahí. */
   readonly pivote: Group;
+  /**
+   * Canto frontal inferior: al girarlo en x la funda se inclina hacia la cámara como
+   * cuando se la engancha con el dedo desde arriba (y su canto trasero se levanta).
+   */
+  readonly inclinador: Group;
   readonly malla: MallaFunda;
 }
 
@@ -24,14 +29,18 @@ function calcularHueco(cantidad: number): number {
   return cantidad > 1 ? MEDIDAS_FUNDA.lado * Math.sin(INCLINACION_ULTIMA) : 0;
 }
 
-function crearPivote(malla: MallaFunda, x: number, azar: () => number): Group {
+function crearPivote(malla: MallaFunda, x: number, azar: () => number): FundaEnRepisa {
+  const { lado } = MEDIDAS_FUNDA;
   const espesor = malla.geometry.parameters.width;
-  malla.position.set(espesor / 2, MEDIDAS_FUNDA.lado / 2, 0);
+  malla.position.set(espesor / 2, lado / 2, -lado / 2);
+  const inclinador = new Group();
+  inclinador.position.z = lado / 2;
+  inclinador.add(malla);
   const pivote = new Group();
   pivote.position.set(x, 0, entre(azar, -VARIACION_FONDO, VARIACION_FONDO));
   pivote.rotation.y = entre(azar, -VARIACION_GIRO, VARIACION_GIRO);
-  pivote.add(malla);
-  return pivote;
+  pivote.add(inclinador);
+  return { id: malla.name, pivote, inclinador, malla };
 }
 
 /** Fila centrada sobre la tabla (y = 0), de 1 a 10 fundas; la última apoyada en su vecina. */
@@ -50,11 +59,11 @@ export function ubicarFundas(
   const fundas = mallas.map((malla, indice) => {
     const esUltimaInclinada = indice === mallas.length - 1 && mallas.length > 1;
     x += esUltimaInclinada ? hueco : 0;
-    const pivote = crearPivote(malla, x, azar);
-    pivote.rotation.z = esUltimaInclinada ? INCLINACION_ULTIMA : 0;
+    const funda = crearPivote(malla, x, azar);
+    funda.pivote.rotation.z = esUltimaInclinada ? INCLINACION_ULTIMA : 0;
     x += (espesores[indice] ?? 0) + SEPARACION;
-    grupo.add(pivote);
-    return { id: malla.name, pivote, malla };
+    grupo.add(funda.pivote);
+    return funda;
   });
   return { grupo, fundas };
 }

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { crearElemento, leerToken, obtenerElemento } from './dom';
+import { crearElemento, devolverFocoSiSePerdio, leerToken, obtenerElemento } from './dom';
 
 describe('crearElemento', () => {
   it('crea la etiqueta pedida sin opciones', () => {
@@ -71,5 +71,27 @@ describe('leerToken', () => {
 
   it('lanza error con el nombre si no existe', () => {
     expect(() => leerToken('--no-existe')).toThrow('--no-existe');
+  });
+});
+
+describe('devolverFocoSiSePerdio', () => {
+  beforeEach(() => {
+    document.body.replaceChildren();
+  });
+
+  it('enfoca si el foco está en body', () => {
+    const boton = crearElemento('button');
+    document.body.append(boton);
+    devolverFocoSiSePerdio(boton);
+    expect(document.activeElement).toBe(boton);
+  });
+
+  it('no roba el foco de otro control', () => {
+    const otro = crearElemento('button');
+    const boton = crearElemento('button');
+    document.body.append(otro, boton);
+    otro.focus();
+    devolverFocoSiSePerdio(boton);
+    expect(document.activeElement).toBe(otro);
   });
 });

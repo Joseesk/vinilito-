@@ -46,3 +46,14 @@ export function leerToken(nombre: string): string {
   }
   return valor;
 }
+
+/**
+ * Enfoca el elemento solo si el foco quedó "perdido" en body (p. ej. se quitó la ficha que
+ * lo tenía). Si el usuario ya está en otro control, no se le roba.
+ */
+export function devolverFocoSiSePerdio(elemento: HTMLElement): void {
+  const activo = document.activeElement;
+  if (activo === null || activo === document.body) {
+    elemento.focus();
+  }
+}

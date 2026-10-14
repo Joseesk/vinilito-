@@ -17,3 +17,15 @@
   pointer-events: none;
   background: radial-gradient(ellipse at 50% 40%, transparent 35%, var(--vineta) 100%);
 }
+
+/* Botones accesibles: invisibles, alineados con cada funda 3D (posición por JS) */
+.capa3d__funda {
+  position: fixed;
+  background: transparent;
+  border-radius: 2px;
+}
+
+.capa3d__funda:focus-visible {
+  outline: 3px solid var(--estudio-luz);
+  outline-offset: 3px;
+}

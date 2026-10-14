@@ -214,6 +214,21 @@
   font-size: 0.875rem;
 }
 
+/* Con el estudio 3D listo: fondo transparente, sin repisa CSS y los clicks pasan al 3D
+   (salvo en el cartel, que sigue siendo DOM) */
+.escena--sobre-3d {
+  background: transparent;
+  pointer-events: none;
+}
+
+.escena--sobre-3d .repisa {
+  display: none;
+}
+
+.escena--sobre-3d .cartel {
+  pointer-events: auto;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .lomo__cuerpo,
   .lomo__cuerpo::after {

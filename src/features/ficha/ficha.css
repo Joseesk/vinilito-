@@ -11,6 +11,8 @@
   color: var(--tinta);
   border: var(--borde);
   box-shadow: var(--sombra);
+  /* Por encima del escenario del vinilo y de los botones del estudio 3D */
+  z-index: 3;
   visibility: hidden;
 }
 

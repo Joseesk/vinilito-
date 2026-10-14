@@ -29,7 +29,7 @@ async function cargar(contenedor: HTMLElement, senales: SenalesDispositivo): Pro
   }
   try {
     // Import dinámico: `three` va en un chunk aparte y no demora el primer paint
-    const { montarEscena3d } = await import('./renderizador');
+    const { montarEscena3d } = await import('./montarEscena3d');
     // Los lomos se imprimen en canvas: sin esto saldrían con la fuente de respaldo
     await document.fonts.ready;
     montarEscena3d(contenedor, detectarCalidad(senales));
