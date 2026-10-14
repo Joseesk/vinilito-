@@ -6,6 +6,8 @@
   --profundidad-lomo: clamp(3rem, 6vw, 6rem);
   --giro-escena: -28deg;
   --inclinacion-losa: 48deg;
+  --avance-hover: 1.5rem;
+  --duracion-hover: 0.25s;
 
   position: relative;
   display: flex;
@@ -42,6 +44,7 @@
   position: absolute;
   inset: 0;
   transform-style: preserve-3d;
+  transition: transform var(--duracion-hover) ease-out;
 }
 
 .lomo__frente {
@@ -130,4 +133,37 @@
 
 .losa__enlace {
   text-underline-offset: 0.2em;
+}
+
+/* Capa extra de sombra en la cara lateral: el hover solo sube su opacidad */
+.lomo__lado::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--side-shade);
+  opacity: 0;
+  transition: opacity var(--duracion-hover) ease-out;
+}
+
+/* Hover: anima .lomo__cuerpo y no el <button>, que es el que mueve la intro */
+.lomo:hover .lomo__cuerpo,
+.lomo:focus-visible .lomo__cuerpo {
+  transform: translateZ(var(--avance-hover));
+}
+
+.lomo:hover .lomo__lado::before,
+.lomo:focus-visible .lomo__lado::before {
+  opacity: 1;
+}
+
+.lomo:focus-visible {
+  outline: 3px solid var(--cream);
+  outline-offset: var(--espacio-s);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lomo__cuerpo,
+  .lomo__lado::before {
+    transition: none;
+  }
 }
