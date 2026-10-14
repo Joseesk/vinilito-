@@ -7,8 +7,8 @@
   width: min(26rem, 34vw);
   height: fit-content;
   margin-block: auto;
-  background: var(--cream);
-  color: var(--ink);
+  background: var(--papel);
+  color: var(--tinta);
   visibility: hidden;
 }
 
@@ -18,7 +18,7 @@
   gap: var(--espacio-m);
   padding: var(--espacio-m) var(--espacio-l);
   background: var(--color-ficha);
-  color: var(--color-texto-ficha);
+  color: var(--tinta);
 }
 
 .ficha__numero {

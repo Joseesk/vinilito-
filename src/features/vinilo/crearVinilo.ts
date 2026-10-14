@@ -35,7 +35,7 @@ export function crearVinilo(proyecto: Proyecto): HTMLElement {
     clases: ['vinilo'],
     atributos: {
       'data-id': proyecto.id,
-      style: `--color-etiqueta: var(--${proyecto.color}); --color-numero: var(--${proyecto.colorTexto})`,
+      style: `--color-etiqueta: var(--${proyecto.color})`,
     },
     hijos: [disco, crearElemento('div', { clases: ['vinilo__brillo'] })],
   });

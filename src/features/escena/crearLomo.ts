@@ -14,11 +14,7 @@ function crearFrente(proyecto: Proyecto): HTMLSpanElement {
 
 /** Variables CSS por lomo: el color sale del token y `--indice` escalona la altura. */
 function crearEstilo(proyecto: Proyecto, indice: number): string {
-  return [
-    `--color-lomo: var(--${proyecto.color})`,
-    `--color-texto: var(--${proyecto.colorTexto})`,
-    `--indice: ${indice}`,
-  ].join('; ');
+  return [`--color-lomo: var(--${proyecto.color})`, `--indice: ${indice}`].join('; ');
 }
 
 export function crearLomo(proyecto: Proyecto, indice: number): HTMLButtonElement {

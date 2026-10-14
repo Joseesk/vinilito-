@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { PROYECTOS } from './proyectos';
+import { MAXIMO_PROYECTOS, PROYECTOS } from './proyectos';
 
 describe('PROYECTOS', () => {
-  it('tiene exactamente 5 proyectos', () => {
-    expect(PROYECTOS).toHaveLength(5);
+  it(`tiene entre 1 y ${MAXIMO_PROYECTOS} proyectos`, () => {
+    expect(PROYECTOS.length).toBeGreaterThanOrEqual(1);
+    expect(PROYECTOS.length).toBeLessThanOrEqual(MAXIMO_PROYECTOS);
   });
 
   it('tiene ids únicos', () => {
@@ -11,12 +12,13 @@ describe('PROYECTOS', () => {
     expect(ids.size).toBe(PROYECTOS.length);
   });
 
-  it('numera los lomos del 1 al 5 sin repetir', () => {
+  it('numera los discos de 1 a N sin huecos ni repetidos', () => {
     const numeros = PROYECTOS.map((proyecto) => proyecto.numero).sort((a, b) => a - b);
-    expect(numeros).toEqual([1, 2, 3, 4, 5]);
+    const esperados = PROYECTOS.map((_, indice) => indice + 1);
+    expect(numeros).toEqual(esperados);
   });
 
-  it('usa un color de lomo distinto por proyecto', () => {
+  it('usa un color de disco distinto por proyecto', () => {
     const colores = new Set(PROYECTOS.map((proyecto) => proyecto.color));
     expect(colores.size).toBe(PROYECTOS.length);
   });

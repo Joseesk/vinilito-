@@ -57,7 +57,7 @@
   position: absolute;
   inset: 47%;
   border-radius: 50%;
-  background: var(--bg);
+  background: var(--papel);
 }
 
 /* Arriba del agujero central para que no lo tape */
@@ -68,7 +68,7 @@
   font-weight: var(--peso-titulo);
   font-size: calc(var(--tamanio-disco) * 0.08);
   line-height: 1;
-  color: var(--color-numero);
+  color: var(--tinta);
 }
 
 .vinilo__portada {

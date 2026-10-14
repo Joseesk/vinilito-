@@ -1,24 +1,38 @@
 :root {
-  /* Colores */
-  --bg: #1e1712;
-  --floor: #2c221b;
-  --cream: #f2e8d5;
-  --mustard: #d9a441;
-  --terracotta: #c8553d;
-  --olive: #7a8b3d;
-  --burgundy: #7b2d3b;
-  --ink: #14100d;
-  --side-shade: rgba(0, 0, 0, 0.35);
+  /* Base neobrutalista */
+  --papel: #fff4e0;
+  --tinta: #111111;
+
+  /* Un color por disco (proyecto 1–10). Texto encima siempre --tinta: todos dan ≥ 4.5:1 */
+  --disco-1: #ffd23f;
+  --disco-2: #ff6b9d;
+  --disco-3: #3a86ff;
+  --disco-4: #06d6a0;
+  --disco-5: #ff8c42;
+  --disco-6: #b388ff;
+  --disco-7: #4cc9f0;
+  --disco-8: #ef476f;
+  --disco-9: #c6f432;
+  --disco-10: #e9c46a;
+
+  /* Bloques: borde grueso y sombra dura sin blur */
+  --grosor-borde: 3px;
+  --borde: var(--grosor-borde) solid var(--tinta);
+  --sombra: 6px 6px 0 var(--tinta);
+  --sombra-hover: 9px 9px 0 var(--tinta);
+
+  /* Vinilo realista (único lugar con degradados) */
   --vinyl: #111;
   --vinyl-groove: rgba(255, 255, 255, 0.05);
   --vinyl-sheen: rgba(255, 255, 255, 0.14);
-  /* --bg semitransparente: tapa la escena en móvil detrás del disco y la ficha */
-  --velo: rgba(30, 23, 18, 0.88);
+  --side-shade: rgba(0, 0, 0, 0.35);
+  /* --papel semitransparente: tapa la escena en móvil detrás del disco y la ficha */
+  --velo: rgba(255, 244, 224, 0.92);
 
-  /* Tipografia */
-  --fuente-titulo: 'Syne', system-ui, sans-serif;
+  /* Tipografia (Archivo Black solo tiene peso 400) */
+  --fuente-titulo: 'Archivo Black', system-ui, sans-serif;
   --fuente-texto: 'Space Grotesk', system-ui, sans-serif;
-  --peso-titulo: 800;
+  --peso-titulo: 400;
   --peso-texto: 400;
   --peso-texto-medio: 500;
 

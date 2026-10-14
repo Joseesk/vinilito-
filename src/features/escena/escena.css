@@ -19,8 +19,8 @@
   overflow: hidden;
   background: linear-gradient(
     to top,
-    var(--floor) var(--altura-piso),
-    var(--bg) var(--altura-piso)
+    var(--papel) var(--altura-piso),
+    var(--papel) var(--altura-piso)
   );
 }
 
@@ -56,7 +56,7 @@
   justify-content: space-between;
   padding: var(--espacio-m) var(--espacio-s);
   background: var(--color-lomo);
-  color: var(--color-texto);
+  color: var(--tinta);
 }
 
 .lomo__titulo {
@@ -102,8 +102,8 @@
   bottom: var(--espacio-s);
   max-width: 20rem;
   padding: var(--espacio-s) var(--espacio-m);
-  background: var(--cream);
-  color: var(--ink);
+  background: var(--papel);
+  color: var(--tinta);
   transform-origin: bottom left;
   transform: rotateX(var(--inclinacion-losa));
 }
@@ -157,7 +157,7 @@
 }
 
 .lomo:focus-visible {
-  outline: 3px solid var(--cream);
+  outline: 3px solid var(--tinta);
   outline-offset: var(--espacio-s);
 }
 
@@ -178,7 +178,7 @@
     padding: var(--espacio-l) var(--espacio-m);
     perspective: none;
     overflow: visible;
-    background: var(--bg);
+    background: var(--papel);
   }
 
   .losa {

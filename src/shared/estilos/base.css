@@ -12,8 +12,8 @@ body {
 }
 
 body {
-  background-color: var(--bg);
-  color: var(--cream);
+  background-color: var(--papel);
+  color: var(--tinta);
   font-family: var(--fuente-texto);
   font-weight: var(--peso-texto);
   line-height: 1.5;
