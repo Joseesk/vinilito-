@@ -1,5 +1,6 @@
 import { PROYECTOS } from '../../data/proyectos';
 import { emitir, escuchar } from '../../shared/eventos';
+import { combinarDesconexiones } from '../../shared/utils';
 import { crearApertura, iniciarGiro } from './abrirVinilo';
 import { crearVinilo } from './crearVinilo';
 
@@ -8,7 +9,8 @@ type EstadoVinilo = 'cerrado' | 'abriendo' | 'abierto' | 'cerrando';
 interface SesionVinilo {
   readonly id: string;
   readonly apertura: gsap.core.Timeline;
-  readonly giro: gsap.core.Tween;
+  /** `null` con movimiento reducido: el disco no gira. */
+  readonly giro: gsap.core.Tween | null;
 }
 
 /** Dueño único del estado: escena y ficha solo reaccionan a sus eventos. */
@@ -81,7 +83,7 @@ class ControlVinilo {
       return;
     }
     const { id, apertura, giro } = this.sesion;
-    giro.kill();
+    giro?.kill();
     apertura.kill();
     this.escenario.replaceChildren();
     this.sesion = null;
@@ -102,9 +104,8 @@ class ControlVinilo {
 /** Devuelve la función que desconecta los listeners. */
 export function conectarControlVinilo(escenario: HTMLElement): () => void {
   const control = new ControlVinilo(escenario);
-  const desconectar = [
+  return combinarDesconexiones([
     escuchar('proyecto:seleccionado', ({ id }) => control.seleccionar(id)),
     escuchar('vinilo:cerrar', () => control.cerrar()),
-  ];
-  return () => desconectar.forEach((dejarDeEscuchar) => dejarDeEscuchar());
+  ]);
 }

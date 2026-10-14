@@ -1,6 +1,14 @@
 import { PROYECTOS } from '../../data/proyectos';
-import { DURACION_FICHA, EASE_ENTRADA, RETRASO_FICHA, esMovil, gsap } from '../../shared/animacion';
+import {
+  DURACION_FICHA,
+  EASE_ENTRADA,
+  RETRASO_FICHA,
+  esMovil,
+  gsap,
+  prefiereMenosMovimiento,
+} from '../../shared/animacion';
 import { escuchar } from '../../shared/eventos';
+import { combinarDesconexiones } from '../../shared/utils';
 import { conectarCierre } from './cerrarFicha';
 import { crearFicha } from './crearFicha';
 
@@ -8,6 +16,9 @@ const ENTRADA_FICHA_PORCENTAJE = 12;
 
 /** Escritorio: entra desde la derecha. Móvil: desde abajo, donde está la ficha. */
 function obtenerDesplazamientoInicial(): gsap.TweenVars {
+  if (prefiereMenosMovimiento()) {
+    return {};
+  }
   return esMovil()
     ? { yPercent: ENTRADA_FICHA_PORCENTAJE }
     : { xPercent: ENTRADA_FICHA_PORCENTAJE };
@@ -52,6 +63,11 @@ class ControlFicha {
     this.abierta = { elemento, entrada, desconectarCierre: conectarCierre(elemento) };
   }
 
+  /** Al terminar la apertura: lectores de pantalla anuncian el título y Tab sigue dentro. */
+  enfocar(): void {
+    this.abierta?.elemento.focus();
+  }
+
   ocultar(): void {
     if (!this.abierta) {
       return;
@@ -79,9 +95,9 @@ class ControlFicha {
 /** Devuelve la función que desconecta los listeners. */
 export function conectarFicha(contenedor: HTMLElement): () => void {
   const control = new ControlFicha(contenedor);
-  const desconectar = [
+  return combinarDesconexiones([
     escuchar('vinilo:abriendo', ({ id }) => control.mostrar(id)),
+    escuchar('vinilo:abierto', () => control.enfocar()),
     escuchar('vinilo:cerrando', () => control.ocultar()),
-  ];
-  return () => desconectar.forEach((dejarDeEscuchar) => dejarDeEscuchar());
+  ]);
 }

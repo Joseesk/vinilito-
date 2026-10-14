@@ -6,8 +6,10 @@ import {
   prefiereMenosMovimiento,
 } from '../../shared/animacion';
 import { escuchar } from '../../shared/eventos';
+import { combinarDesconexiones } from '../../shared/utils';
 import type { PayloadProyecto } from '../../shared/types/eventos';
 import { PROPIEDADES_ANIMADAS, SELECTOR_CARAS } from './constantes';
+import { buscarLomo, obtenerLomos } from './lomos';
 
 const SALIDA_FUNDA_PORCENTAJE = -18;
 const AVANCE_FUNDA_PX = 60;
@@ -23,12 +25,11 @@ function obtenerCarasDeOtros(lomos: readonly HTMLElement[], elegido: HTMLElement
 
 /** Misma duración y ease que el disco: funda y vinilo se leen como un solo movimiento. */
 function crearSeleccion(escena: HTMLElement, id: string): gsap.core.Timeline | null {
-  const lomos = [...escena.querySelectorAll<HTMLElement>('.lomo')];
-  const elegido = lomos.find((lomo) => lomo.dataset['id'] === id);
+  const elegido = buscarLomo(escena, id);
   if (!elegido) {
     return null;
   }
-  const carasOtros = obtenerCarasDeOtros(lomos, elegido);
+  const carasOtros = obtenerCarasDeOtros(obtenerLomos(escena), elegido);
   const linea = gsap.timeline({
     defaults: { duration: DURACION_APERTURA, ease: EASE_VINILO },
     onReverseComplete: () => {
@@ -56,11 +57,10 @@ export function conectarSeleccion(escena: HTMLElement, intro: gsap.core.Timeline
     actual?.progress(0).kill();
     actual = crearSeleccion(escena, id);
   };
-  const desconectar = [
+  return combinarDesconexiones([
     escuchar('vinilo:abriendo', alAbrir),
     escuchar('vinilo:cerrando', () => {
       actual?.reverse();
     }),
-  ];
-  return () => desconectar.forEach((dejarDeEscuchar) => dejarDeEscuchar());
+  ]);
 }

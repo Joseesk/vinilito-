@@ -5,6 +5,7 @@ import {
   EASE_VINILO,
   esMovil,
   gsap,
+  prefiereMenosMovimiento,
 } from '../../shared/animacion';
 import { obtenerElemento } from '../../shared/utils';
 
@@ -31,6 +32,10 @@ export function crearApertura(
     onReverseComplete: avisos.alCerrar,
   });
   linea.to(escenario, { autoAlpha: 1 }, 0);
+  // Movimiento reducido: solo el fundido del escenario
+  if (prefiereMenosMovimiento()) {
+    return linea;
+  }
   const salida = esMovil() ? -SALIDA_DISCO_PORCENTAJE : SALIDA_DISCO_PORCENTAJE;
   linea.from(vinilo, { yPercent: salida, scale: ESCALA_INICIAL_DISCO }, 0);
   return linea;
@@ -40,7 +45,10 @@ export function crearApertura(
  * El giro va en un tween aparte: con `repeat: -1` dentro del timeline de apertura,
  * este duraría infinito y `reverse()` nunca volvería al inicio.
  */
-export function iniciarGiro(vinilo: HTMLElement): gsap.core.Tween {
+export function iniciarGiro(vinilo: HTMLElement): gsap.core.Tween | null {
+  if (prefiereMenosMovimiento()) {
+    return null;
+  }
   return gsap.to(obtenerElemento('.vinilo__disco', vinilo), {
     rotation: VUELTA_COMPLETA,
     duration: DURACION_VUELTA_DISCO,

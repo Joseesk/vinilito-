@@ -32,7 +32,12 @@ export function crearLomo(proyecto: Proyecto, indice: number): HTMLButtonElement
   });
   const lomo = crearElemento('button', {
     clases: ['lomo'],
-    atributos: { type: 'button', 'data-id': proyecto.id, style: crearEstilo(proyecto, indice) },
+    atributos: {
+      type: 'button',
+      'data-id': proyecto.id,
+      'aria-expanded': 'false',
+      style: crearEstilo(proyecto, indice),
+    },
     hijos: [cuerpo],
   });
   lomo.addEventListener('click', () => emitir('proyecto:seleccionado', { id: proyecto.id }));

@@ -46,3 +46,19 @@ button {
 a {
   color: inherit;
 }
+
+/* currentColor: el contorno contrasta sobre cualquier fondo (losa, ficha, cabeceras) */
+a:focus-visible,
+button:focus-visible {
+  outline: 3px solid currentColor;
+  outline-offset: var(--espacio-xs);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

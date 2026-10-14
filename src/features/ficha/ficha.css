@@ -59,10 +59,9 @@
   text-underline-offset: 0.2em;
 }
 
-.ficha__cerrar:focus-visible,
-.ficha__enlace:focus-visible {
-  outline: 3px solid currentColor;
-  outline-offset: var(--espacio-xs);
+/* El panel recibe foco por código solo para anunciarse; no es interactivo */
+.ficha:focus {
+  outline: none;
 }
 
 /* Móvil: ficha abajo, a todo el ancho, debajo del disco */

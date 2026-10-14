@@ -42,6 +42,8 @@ export function crearFicha(proyecto: Proyecto): HTMLElement {
     clases: ['ficha'],
     atributos: {
       'aria-labelledby': ID_TITULO,
+      // Enfocable por código (no con Tab) para llevar el foco a la ficha al abrirse
+      tabindex: '-1',
       style: `--color-ficha: var(--${proyecto.color}); --color-texto-ficha: var(--${proyecto.colorTexto})`,
     },
     hijos: [crearCabecera(proyecto), crearCuerpo(proyecto)],
