@@ -12,6 +12,8 @@
   --vinyl: #111;
   --vinyl-groove: rgba(255, 255, 255, 0.05);
   --vinyl-sheen: rgba(255, 255, 255, 0.14);
+  /* --bg semitransparente: tapa la escena en móvil detrás del disco y la ficha */
+  --velo: rgba(30, 23, 18, 0.88);
 
   /* Tipografia */
   --fuente-titulo: 'Syne', system-ui, sans-serif;

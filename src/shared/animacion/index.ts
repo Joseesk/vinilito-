@@ -11,5 +11,7 @@ export {
   EASE_VINILO,
   EASE_GIRO,
   MEDIA_MOVIMIENTO_REDUCIDO,
+  MEDIA_MOVIL,
   prefiereMenosMovimiento,
+  esMovil,
 } from './config';

@@ -167,3 +167,60 @@
     transition: none;
   }
 }
+
+/* Móvil: sin perspectiva, lomos acostados y apilados como discos en una caja */
+@media (max-width: 767px) {
+  .escena {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: var(--espacio-l);
+    padding: var(--espacio-l) var(--espacio-m);
+    perspective: none;
+    overflow: visible;
+    background: var(--bg);
+  }
+
+  .losa {
+    position: static;
+    max-width: none;
+    transform: none;
+  }
+
+  .escena__lomos {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--espacio-s);
+    transform: none;
+  }
+
+  /* Largos escalonados: el equivalente acostado de las alturas de escritorio */
+  .lomo {
+    width: calc(70% + var(--indice) * 7.5%);
+    height: 4.5rem;
+  }
+
+  .lomo__frente {
+    flex-direction: row;
+    padding: var(--espacio-s) var(--espacio-m);
+  }
+
+  .lomo__titulo {
+    writing-mode: horizontal-tb;
+    transform: none;
+  }
+
+  .lomo__numero {
+    font-size: 2.75rem;
+  }
+
+  /* Sin perspectiva la cara lateral no se ve */
+  .lomo__lado {
+    display: none;
+  }
+
+  .lomo:hover .lomo__cuerpo,
+  .lomo:focus-visible .lomo__cuerpo {
+    transform: translateX(var(--espacio-s));
+  }
+}

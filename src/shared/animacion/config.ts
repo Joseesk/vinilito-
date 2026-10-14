@@ -15,7 +15,17 @@ export const EASE_VINILO = 'power2.inOut';
 export const EASE_GIRO = 'none';
 
 export const MEDIA_MOVIMIENTO_REDUCIDO = '(prefers-reduced-motion: reduce)';
+/** Debe coincidir con el `@media (max-width: 767px)` de los CSS de cada feature. */
+export const MEDIA_MOVIL = '(max-width: 767px)';
+
+function coincideMedia(consulta: string): boolean {
+  return window.matchMedia(consulta).matches;
+}
 
 export function prefiereMenosMovimiento(): boolean {
-  return window.matchMedia(MEDIA_MOVIMIENTO_REDUCIDO).matches;
+  return coincideMedia(MEDIA_MOVIMIENTO_REDUCIDO);
+}
+
+export function esMovil(): boolean {
+  return coincideMedia(MEDIA_MOVIL);
 }

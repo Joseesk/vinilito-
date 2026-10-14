@@ -1,6 +1,7 @@
 import {
   DURACION_APERTURA,
   EASE_VINILO,
+  esMovil,
   gsap,
   prefiereMenosMovimiento,
 } from '../../shared/animacion';
@@ -10,6 +11,8 @@ import { PROPIEDADES_ANIMADAS, SELECTOR_CARAS } from './constantes';
 
 const SALIDA_FUNDA_PORCENTAJE = -18;
 const AVANCE_FUNDA_PX = 60;
+/** En móvil el lomo está acostado: la funda sale hacia la derecha. */
+const SALIDA_FUNDA_MOVIL_PORCENTAJE = 8;
 const OPACIDAD_ATENUADA = 0.2;
 
 function obtenerCarasDeOtros(lomos: readonly HTMLElement[], elegido: HTMLElement): HTMLElement[] {
@@ -35,7 +38,10 @@ function crearSeleccion(escena: HTMLElement, id: string): gsap.core.Timeline | n
   });
   linea.to(carasOtros, { opacity: OPACIDAD_ATENUADA }, 0);
   if (!prefiereMenosMovimiento()) {
-    linea.to(elegido, { yPercent: SALIDA_FUNDA_PORCENTAJE, z: AVANCE_FUNDA_PX }, 0);
+    const salida = esMovil()
+      ? { xPercent: SALIDA_FUNDA_MOVIL_PORCENTAJE }
+      : { yPercent: SALIDA_FUNDA_PORCENTAJE, z: AVANCE_FUNDA_PX };
+    linea.to(elegido, salida, 0);
   }
   return linea;
 }

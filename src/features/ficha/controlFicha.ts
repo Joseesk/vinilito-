@@ -1,10 +1,17 @@
 import { PROYECTOS } from '../../data/proyectos';
-import { DURACION_FICHA, EASE_ENTRADA, RETRASO_FICHA, gsap } from '../../shared/animacion';
+import { DURACION_FICHA, EASE_ENTRADA, RETRASO_FICHA, esMovil, gsap } from '../../shared/animacion';
 import { escuchar } from '../../shared/eventos';
 import { conectarCierre } from './cerrarFicha';
 import { crearFicha } from './crearFicha';
 
 const ENTRADA_FICHA_PORCENTAJE = 12;
+
+/** Escritorio: entra desde la derecha. Móvil: desde abajo, donde está la ficha. */
+function obtenerDesplazamientoInicial(): gsap.TweenVars {
+  return esMovil()
+    ? { yPercent: ENTRADA_FICHA_PORCENTAJE }
+    : { xPercent: ENTRADA_FICHA_PORCENTAJE };
+}
 
 interface FichaAbierta {
   readonly elemento: HTMLElement;
@@ -31,10 +38,11 @@ class ControlFicha {
     this.contenedor.append(elemento);
     const entrada = gsap.fromTo(
       elemento,
-      { autoAlpha: 0, xPercent: ENTRADA_FICHA_PORCENTAJE },
+      { autoAlpha: 0, ...obtenerDesplazamientoInicial() },
       {
         autoAlpha: 1,
         xPercent: 0,
+        yPercent: 0,
         duration: DURACION_FICHA,
         delay: RETRASO_FICHA,
         ease: EASE_ENTRADA,

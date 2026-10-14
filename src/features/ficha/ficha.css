@@ -64,3 +64,25 @@
   outline: 3px solid currentColor;
   outline-offset: var(--espacio-xs);
 }
+
+/* Móvil: ficha abajo, a todo el ancho, debajo del disco */
+@media (max-width: 767px) {
+  .ficha {
+    inset: auto var(--espacio-m) var(--espacio-m);
+    width: auto;
+    margin: 0;
+  }
+
+  .ficha__cabecera {
+    padding: var(--espacio-s) var(--espacio-m);
+  }
+
+  .ficha__numero {
+    font-size: 2.75rem;
+  }
+
+  .ficha__cuerpo {
+    gap: var(--espacio-s);
+    padding: var(--espacio-m);
+  }
+}

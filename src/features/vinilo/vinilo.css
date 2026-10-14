@@ -94,3 +94,19 @@
   );
   pointer-events: none;
 }
+
+/* Móvil: disco arriba (baja al abrirse) y velo sobre la escena; la ficha va debajo */
+@media (max-width: 767px) {
+  .vinilo-escenario {
+    align-items: start;
+    justify-items: center;
+    padding: var(--espacio-xl) 0 0;
+    background: var(--velo);
+    /* Tocar el velo cierra: si no, el toque caería en un lomo de abajo y cambiaría de proyecto */
+    pointer-events: auto;
+  }
+
+  .vinilo {
+    --tamanio-disco: min(70vw, 45svh, 20rem);
+  }
+}

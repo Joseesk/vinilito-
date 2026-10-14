@@ -3,10 +3,12 @@ import {
   DURACION_VUELTA_DISCO,
   EASE_GIRO,
   EASE_VINILO,
+  esMovil,
   gsap,
 } from '../../shared/animacion';
 import { obtenerElemento } from '../../shared/utils';
 
+/** Escritorio: sube desde abajo. Móvil: baja desde arriba, con la ficha debajo. */
 const SALIDA_DISCO_PORCENTAJE = 60;
 const ESCALA_INICIAL_DISCO = 0.6;
 const VUELTA_COMPLETA = 360;
@@ -29,7 +31,8 @@ export function crearApertura(
     onReverseComplete: avisos.alCerrar,
   });
   linea.to(escenario, { autoAlpha: 1 }, 0);
-  linea.from(vinilo, { yPercent: SALIDA_DISCO_PORCENTAJE, scale: ESCALA_INICIAL_DISCO }, 0);
+  const salida = esMovil() ? -SALIDA_DISCO_PORCENTAJE : SALIDA_DISCO_PORCENTAJE;
+  linea.from(vinilo, { yPercent: salida, scale: ESCALA_INICIAL_DISCO }, 0);
   return linea;
 }
 
