@@ -6,6 +6,8 @@
   --alto-tabla: 1.25rem;
   --alto-mensula: 3.5rem;
   --inclinacion-ultimo: -6deg;
+  --inclinacion-cartel: -2deg;
+  --subida-hover: -0.75rem;
   --duracion-hover: 0.25s;
 
   position: relative;
@@ -86,7 +88,21 @@
 .lomo__cuerpo {
   position: absolute;
   inset: 0;
+  /* Contexto propio: la sombra (z-index -1) queda detrás del frente y no detrás de la pared */
+  isolation: isolate;
   transition: transform var(--duracion-hover) ease-out;
+}
+
+/* Sombra dura como capa: el hover solo anima su opacidad (no box-shadow) */
+.lomo__cuerpo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--tinta);
+  transform: translate(var(--desfase-sombra), var(--desfase-sombra));
+  opacity: 0;
+  transition: opacity var(--duracion-hover) ease-out;
 }
 
 .lomo__frente {
@@ -95,14 +111,14 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  overflow: hidden;
   background: var(--color-lomo);
   color: var(--tinta);
   border: var(--borde);
 }
 
-.lomo:last-child:not(:first-child) .lomo__frente {
-  /* Pivota sobre la esquina que toca la tabla: la otra se levanta, no se hunde */
+/* La inclinación va en el cuerpo para que la sombra del hover gire con el disco.
+   Pivota sobre la esquina que toca la tabla: la otra se levanta, no se hunde */
+.lomo:last-child:not(:first-child) .lomo__cuerpo {
   transform-origin: bottom left;
   transform: rotate(var(--inclinacion-ultimo));
 }
@@ -133,53 +149,96 @@
   text-overflow: ellipsis;
 }
 
-/* Hover provisorio: el estilo neobrutal completo llega en X3 */
+/* Hover/foco: el disco sube, aparece su sombra dura y queda por encima de sus vecinos */
+.lomo:hover,
+.lomo:focus-visible {
+  z-index: 1;
+}
+
 .lomo:hover .lomo__cuerpo,
 .lomo:focus-visible .lomo__cuerpo {
-  transform: translateY(calc(-1 * var(--espacio-s)));
+  transform: translateY(var(--subida-hover));
 }
 
-/* ---------- Cartel con el perfil (se rediseña en X3) ---------- */
+.lomo:last-child:not(:first-child):hover .lomo__cuerpo,
+.lomo:last-child:not(:first-child):focus-visible .lomo__cuerpo {
+  transform: translateY(var(--subida-hover)) rotate(var(--inclinacion-ultimo));
+}
 
-.losa {
+.lomo:hover .lomo__cuerpo::after,
+.lomo:focus-visible .lomo__cuerpo::after {
+  opacity: 1;
+}
+
+/* ---------- Cartel con el perfil (pegado en la pared) ---------- */
+
+.cartel {
   position: absolute;
+  top: var(--espacio-l);
   left: var(--espacio-l);
-  bottom: var(--espacio-l);
-  max-width: 20rem;
-  padding: var(--espacio-s) var(--espacio-m);
+  max-width: 22rem;
+  padding: var(--espacio-m) var(--espacio-l);
   background: var(--papel);
   color: var(--tinta);
+  border: var(--borde);
+  box-shadow: var(--sombra);
+  transform: rotate(var(--inclinacion-cartel));
 }
 
-.losa__nombre {
-  font-size: clamp(1.25rem, 2.2vw, 1.75rem);
+.cartel__nombre {
+  font-size: clamp(1.5rem, 2.6vw, 2.25rem);
+  line-height: 1;
   text-transform: uppercase;
 }
 
-.losa__rol {
-  margin-top: var(--espacio-xs);
+/* Rol como etiqueta: bloque de color con borde */
+.cartel__rol {
+  display: inline-block;
+  margin-top: var(--espacio-s);
+  padding: var(--espacio-xs) var(--espacio-s);
+  background: var(--disco-1);
+  border: var(--borde);
   font-weight: var(--peso-texto-medio);
 }
 
-.losa__contacto {
+.cartel__contacto {
   font-style: normal;
 }
 
-.losa__enlaces {
+.cartel__enlaces {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--espacio-xs) var(--espacio-m);
-  margin-top: var(--espacio-s);
+  gap: var(--espacio-s);
+  margin-top: var(--espacio-m);
   list-style: none;
   font-size: 0.875rem;
 }
 
-.losa__enlace {
-  text-underline-offset: 0.2em;
+/* Botón neobrutal: al presionar "se aplasta" contra su sombra (solo se anima transform) */
+.cartel__enlace {
+  display: inline-block;
+  padding: var(--espacio-xs) var(--espacio-s);
+  background: var(--papel);
+  border: var(--borde);
+  box-shadow: 3px 3px 0 var(--tinta);
+  font-weight: var(--peso-texto-medio);
+  text-decoration: none;
+  transition: transform var(--duracion-hover) ease-out;
+}
+
+.cartel__enlace:hover {
+  background: var(--disco-9);
+}
+
+.cartel__enlace:active {
+  box-shadow: none;
+  transform: translate(3px, 3px);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .lomo__cuerpo {
+  .lomo__cuerpo,
+  .lomo__cuerpo::after,
+  .cartel__enlace {
     transition: none;
   }
 }
@@ -198,7 +257,7 @@
     padding: var(--espacio-l) var(--espacio-m);
   }
 
-  .losa {
+  .cartel {
     position: static;
     max-width: none;
   }

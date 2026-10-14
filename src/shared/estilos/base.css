@@ -47,7 +47,7 @@ a {
   color: inherit;
 }
 
-/* currentColor: el contorno contrasta sobre cualquier fondo (losa, ficha, cabeceras) */
+/* currentColor: el contorno contrasta sobre cualquier fondo (cartel, ficha, cabeceras) */
 a:focus-visible,
 button:focus-visible {
   outline: 3px solid currentColor;

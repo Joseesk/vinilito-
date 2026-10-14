@@ -7,24 +7,25 @@ function crearEnlace(etiqueta: string, url: string): HTMLLIElement {
     ? { href: url, target: '_blank', rel: 'noopener noreferrer' }
     : { href: url };
   return crearElemento('li', {
-    hijos: [crearElemento('a', { clases: ['losa__enlace'], texto: etiqueta, atributos })],
+    hijos: [crearElemento('a', { clases: ['cartel__enlace'], texto: etiqueta, atributos })],
   });
 }
 
-export function crearLosa(perfil: Perfil): HTMLElement {
+/** Cartel pegado en la pared con el perfil: nombre (único h1), rol y contacto. */
+export function crearCartel(perfil: Perfil): HTMLElement {
   const enlaces = crearElemento('ul', {
-    clases: ['losa__enlaces'],
+    clases: ['cartel__enlaces'],
     hijos: [
       crearEnlace(perfil.email, `mailto:${perfil.email}`),
       ...perfil.enlaces.map((enlace) => crearEnlace(enlace.etiqueta, enlace.url)),
     ],
   });
   return crearElemento('header', {
-    clases: ['losa'],
+    clases: ['cartel'],
     hijos: [
-      crearElemento('h1', { clases: ['losa__nombre'], texto: perfil.nombre }),
-      crearElemento('p', { clases: ['losa__rol'], texto: perfil.rol }),
-      crearElemento('address', { clases: ['losa__contacto'], hijos: [enlaces] }),
+      crearElemento('h1', { clases: ['cartel__nombre'], texto: perfil.nombre }),
+      crearElemento('p', { clases: ['cartel__rol'], texto: perfil.rol }),
+      crearElemento('address', { clases: ['cartel__contacto'], hijos: [enlaces] }),
     ],
   });
 }

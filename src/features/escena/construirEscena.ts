@@ -2,7 +2,7 @@ import type { Perfil } from '../../shared/types/perfil';
 import type { Proyecto } from '../../shared/types/proyecto';
 import { crearElemento } from '../../shared/utils';
 import { crearLomo } from './crearLomo';
-import { crearLosa } from './crearLosa';
+import { crearCartel } from './crearCartel';
 
 function crearRepisa(proyectos: readonly Proyecto[]): HTMLDivElement {
   const lomos = crearElemento('nav', {
@@ -21,6 +21,6 @@ function crearRepisa(proyectos: readonly Proyecto[]): HTMLDivElement {
 export function construirEscena(proyectos: readonly Proyecto[], perfil: Perfil): HTMLElement {
   return crearElemento('main', {
     clases: ['escena'],
-    hijos: [crearLosa(perfil), crearRepisa(proyectos)],
+    hijos: [crearCartel(perfil), crearRepisa(proyectos)],
   });
 }

@@ -8,7 +8,7 @@ import {
 import { escuchar } from '../../shared/eventos';
 import { combinarDesconexiones } from '../../shared/utils';
 import type { PayloadProyecto } from '../../shared/types/eventos';
-import { PROPIEDADES_ANIMADAS, SELECTOR_CARAS } from './constantes';
+import { PROPIEDADES_ANIMADAS } from './constantes';
 import { buscarLomo, obtenerLomos } from './lomos';
 
 const SALIDA_FUNDA_PORCENTAJE = -18;
@@ -17,27 +17,21 @@ const AVANCE_FUNDA_PX = 60;
 const SALIDA_FUNDA_MOVIL_PORCENTAJE = 8;
 const OPACIDAD_ATENUADA = 0.2;
 
-function obtenerCarasDeOtros(lomos: readonly HTMLElement[], elegido: HTMLElement): HTMLElement[] {
-  return lomos
-    .filter((lomo) => lomo !== elegido)
-    .flatMap((lomo) => [...lomo.querySelectorAll<HTMLElement>(SELECTOR_CARAS)]);
-}
-
 /** Misma duración y ease que el disco: funda y vinilo se leen como un solo movimiento. */
 function crearSeleccion(escena: HTMLElement, id: string): gsap.core.Timeline | null {
   const elegido = buscarLomo(escena, id);
   if (!elegido) {
     return null;
   }
-  const carasOtros = obtenerCarasDeOtros(obtenerLomos(escena), elegido);
+  const otros = obtenerLomos(escena).filter((lomo) => lomo !== elegido);
   const linea = gsap.timeline({
     defaults: { duration: DURACION_APERTURA, ease: EASE_VINILO },
     onReverseComplete: () => {
       linea.kill();
-      gsap.set([elegido, ...carasOtros], { clearProps: PROPIEDADES_ANIMADAS });
+      gsap.set([elegido, ...otros], { clearProps: PROPIEDADES_ANIMADAS });
     },
   });
-  linea.to(carasOtros, { opacity: OPACIDAD_ATENUADA }, 0);
+  linea.to(otros, { opacity: OPACIDAD_ATENUADA }, 0);
   if (!prefiereMenosMovimiento()) {
     const salida = esMovil()
       ? { xPercent: SALIDA_FUNDA_MOVIL_PORCENTAJE }

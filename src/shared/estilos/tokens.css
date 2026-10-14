@@ -18,8 +18,10 @@
   /* Bloques: borde grueso y sombra dura sin blur */
   --grosor-borde: 3px;
   --borde: var(--grosor-borde) solid var(--tinta);
-  --sombra: 6px 6px 0 var(--tinta);
-  --sombra-hover: 9px 9px 0 var(--tinta);
+  --desfase-sombra: 6px;
+  --desfase-sombra-hover: 9px;
+  --sombra: var(--desfase-sombra) var(--desfase-sombra) 0 var(--tinta);
+  --sombra-hover: var(--desfase-sombra-hover) var(--desfase-sombra-hover) 0 var(--tinta);
 
   /* Vinilo realista (único lugar con degradados) */
   --vinyl: #111;

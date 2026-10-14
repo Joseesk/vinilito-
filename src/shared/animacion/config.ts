@@ -11,6 +11,8 @@ export const STAGGER_LOMOS = 0.12;
 
 export const EASE_ENTRADA = 'power3.out';
 export const EASE_VINILO = 'power2.inOut';
+/** Los discos caen sobre la repisa y rebotan apenas, como un objeto con peso. */
+export const EASE_CAIDA = 'back.out(1.6)';
 /** El giro continuo necesita velocidad constante o se notan tirones en cada vuelta. */
 export const EASE_GIRO = 'none';
 
