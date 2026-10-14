@@ -34,3 +34,15 @@ export function obtenerElemento<T extends Element = HTMLElement>(
   }
   return elemento;
 }
+
+/**
+ * Valor de una variable de `tokens.css` (ej. `leerToken('--disco-1')` → `#ffd23f`).
+ * Lanza error si no existe: así los colores del 3D salen de los tokens y no se duplican.
+ */
+export function leerToken(nombre: string): string {
+  const valor = getComputedStyle(document.documentElement).getPropertyValue(nombre).trim();
+  if (valor === '') {
+    throw new Error(`No existe el token "${nombre}"`);
+  }
+  return valor;
+}

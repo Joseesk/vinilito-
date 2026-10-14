@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { crearElemento, obtenerElemento } from './dom';
+import { crearElemento, leerToken, obtenerElemento } from './dom';
 
 describe('crearElemento', () => {
   it('crea la etiqueta pedida sin opciones', () => {
@@ -59,5 +59,17 @@ describe('obtenerElemento', () => {
 
   it('lanza error con el selector si no existe', () => {
     expect(() => obtenerElemento('#inexistente')).toThrow('#inexistente');
+  });
+});
+
+describe('leerToken', () => {
+  it('lee una variable CSS definida en :root', () => {
+    document.documentElement.style.setProperty('--prueba', ' #123456 ');
+    expect(leerToken('--prueba')).toBe('#123456');
+    document.documentElement.style.removeProperty('--prueba');
+  });
+
+  it('lanza error con el nombre si no existe', () => {
+    expect(() => leerToken('--no-existe')).toThrow('--no-existe');
   });
 });

@@ -1,0 +1,76 @@
+import { Color, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
+import { crearElemento, leerToken } from '../../shared/utils';
+import type { ConfiguracionCalidad } from './calidad';
+
+/** Lente algo tele: una repisa vista de frente se deforma menos que con gran angular. */
+const CAMPO_VISION = 35;
+const PLANO_CERCANO = 0.1;
+const PLANO_LEJANO = 100;
+
+export interface Escena3d {
+  readonly escena: Scene;
+  readonly camara: PerspectiveCamera;
+  /** Pide un cuadro. Varios pedidos en el mismo frame se dibujan una sola vez. */
+  readonly solicitarRender: () => void;
+  readonly destruir: () => void;
+}
+
+function crearRenderer(canvas: HTMLCanvasElement, calidad: ConfiguracionCalidad): WebGLRenderer {
+  const renderer = new WebGLRenderer({
+    canvas,
+    antialias: calidad.antialias,
+    powerPreference: calidad.nivel === 'baja' ? 'low-power' : 'high-performance',
+  });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, calidad.dprMaximo));
+  renderer.shadowMap.enabled = calidad.sombras;
+  return renderer;
+}
+
+/** Render a demanda: nada se dibuja si nada cambió (ahorra batería en celulares). */
+function crearEscena3d(canvas: HTMLCanvasElement, calidad: ConfiguracionCalidad): Escena3d {
+  const renderer = crearRenderer(canvas, calidad);
+  const escena = new Scene();
+  escena.background = new Color(leerToken('--estudio-pared'));
+  const camara = new PerspectiveCamera(CAMPO_VISION, 1, PLANO_CERCANO, PLANO_LEJANO);
+  let hayPedido = false;
+  const solicitarRender = (): void => {
+    if (hayPedido) {
+      return;
+    }
+    hayPedido = true;
+    // rAF no corre con la pestaña oculta: el pedido queda en espera sin gastar nada
+    requestAnimationFrame(() => {
+      hayPedido = false;
+      renderer.render(escena, camara);
+    });
+  };
+  const ajustarTamanio = (): void => {
+    renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
+    camara.aspect = canvas.clientWidth / Math.max(canvas.clientHeight, 1);
+    camara.updateProjectionMatrix();
+    solicitarRender();
+  };
+  const observador = new ResizeObserver(ajustarTamanio);
+  observador.observe(canvas);
+  const destruir = (): void => {
+    observador.disconnect();
+    renderer.dispose();
+  };
+  return { escena, camara, solicitarRender, destruir };
+}
+
+/** Punto de entrada del chunk dinámico. Marca el contenedor cuando ya hay un cuadro dibujado. */
+export function montarEscena3d(contenedor: HTMLElement, calidad: ConfiguracionCalidad): Escena3d {
+  const canvas = crearElemento('canvas', {
+    clases: ['escena3d'],
+    atributos: { 'aria-hidden': 'true', 'data-calidad': calidad.nivel },
+  });
+  contenedor.prepend(canvas);
+  const escena3d = crearEscena3d(canvas, calidad);
+  escena3d.solicitarRender();
+  // Se registra después del render pedido: en el mismo frame corre justo detrás de él
+  requestAnimationFrame(() => {
+    contenedor.dataset['escena3d'] = 'lista';
+  });
+  return escena3d;
+}

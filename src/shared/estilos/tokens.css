@@ -26,6 +26,9 @@
   --sombra-chica: var(--desfase-sombra-chica) var(--desfase-sombra-chica) 0 var(--tinta);
   --duracion-hover: 0.25s;
 
+  /* Estudio 3D (Sprint Y): el canvas lee estos valores con leerToken() */
+  --estudio-pared: #1f2421;
+
   /* Vinilo realista (único lugar con degradados) */
   --vinyl: #111;
   --vinyl-groove: rgba(255, 255, 255, 0.05);

@@ -1,0 +1,11 @@
+/*
+ * Lienzo 3D a pantalla completa, detrás de todo. Hasta que el 3D esté completo (Y5)
+ * la escena CSS lo tapa; `#app[data-escena3d='lista']` indica que ya dibujó.
+ */
+.escena3d {
+  position: fixed;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
