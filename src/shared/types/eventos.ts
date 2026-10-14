@@ -18,11 +18,15 @@ export interface PayloadSeleccion extends PayloadProyecto {
 /** Mapa de eventos entre features (sección 1 de sprint.md). `undefined` = sin payload. */
 export interface EventosApp {
   'proyecto:seleccionado': PayloadSeleccion;
-  'vinilo:abriendo': PayloadProyecto;
+  /** Lleva el `origen` para que el animador sepa desde dónde sale la funda. */
+  'vinilo:abriendo': PayloadSeleccion;
   'vinilo:abierto': PayloadProyecto;
   'vinilo:cerrar': undefined;
   'vinilo:cerrando': PayloadProyecto;
   'vinilo:cerrado': PayloadProyecto;
+  /** Los emite el animador activo (CSS o 3D) al terminar: el estado no conoce la animación. */
+  'animacion:abierta': PayloadProyecto;
+  'animacion:cerrada': PayloadProyecto;
 }
 
 export type NombreEvento = keyof EventosApp;

@@ -2,6 +2,7 @@ import './vinilo.css';
 import { MEDIA_MOVIL, gsap } from '../../shared/animacion';
 import { emitir } from '../../shared/eventos';
 import { crearElemento } from '../../shared/utils';
+import { conectarAnimadorCss } from './animadorCss';
 import { conectarControlVinilo } from './estadoVinilo';
 
 /** La apertura se calcula para un layout: si se cruza el breakpoint con un disco abierto, se cierra. */
@@ -19,6 +20,7 @@ export function iniciarVinilo(contenedor: HTMLElement): void {
     atributos: { 'aria-hidden': 'true' },
   });
   contenedor.append(escenario);
-  conectarControlVinilo(escenario);
+  conectarControlVinilo();
+  conectarAnimadorCss(escenario);
   cerrarAlCambiarLayout();
 }
