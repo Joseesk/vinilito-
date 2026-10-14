@@ -1,7 +1,13 @@
 import './vinilo.css';
 import { crearElemento } from '../../shared/utils';
+import { conectarControlVinilo } from './estadoVinilo';
 
-/** Monta el escenario vacío y oculto; el disco de cada proyecto llega en el Sprint 8a. */
 export function iniciarVinilo(contenedor: HTMLElement): void {
-  contenedor.append(crearElemento('div', { clases: ['vinilo-escenario'] }));
+  // Decorativo: la información accesible del proyecto la da la ficha
+  const escenario = crearElemento('div', {
+    clases: ['vinilo-escenario'],
+    atributos: { 'aria-hidden': 'true' },
+  });
+  contenedor.append(escenario);
+  conectarControlVinilo(escenario);
 }

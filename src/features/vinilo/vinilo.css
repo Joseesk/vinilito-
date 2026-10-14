@@ -31,7 +31,11 @@
       var(--vinyl) 96%
     ),
     /* Surcos */ repeating-radial-gradient(circle, var(--vinyl) 0 2px, var(--vinyl-groove) 3px 4px);
+  /* Base sólida: los surcos son semitransparentes y sin esto se ve la escena a través */
+  background-color: var(--vinyl);
   box-shadow: 0 var(--espacio-m) var(--espacio-xl) var(--side-shade);
+  /* Capa propia: girar no repinta los gradientes en cada frame */
+  will-change: transform;
 }
 
 .vinilo__etiqueta {
