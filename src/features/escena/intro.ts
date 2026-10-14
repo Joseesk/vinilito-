@@ -6,19 +6,13 @@ import {
   prefiereMenosMovimiento,
 } from '../../shared/animacion';
 import { obtenerElemento } from '../../shared/utils';
+import { PROPIEDADES_ANIMADAS, SELECTOR_CARAS } from './constantes';
 
 const SUBIDA_LOMOS_PORCENTAJE = 40;
 const ESCALA_INICIAL_NUMERO = 0.6;
 const ENTRADA_LOSA_PORCENTAJE = -130;
 /** Los números arrancan a mitad de la subida para que la intro quede bajo los 2 s. */
 const INICIO_NUMEROS = DURACION_INTRO / 2;
-/** Al terminar se devuelve el control al CSS (si no, el inline pisa reglas futuras). */
-const LIMPIAR = 'transform,opacity,visibility';
-/**
- * La opacidad va en las caras y no en el lomo: `opacity < 1` en un padre con
- * `preserve-3d` aplana el 3D y la cara lateral desaparece durante la animación.
- */
-const SELECTOR_CARAS = '.lomo__frente, .lomo__lado';
 
 interface PiezasIntro {
   readonly lomos: NodeListOf<HTMLElement>;
@@ -37,10 +31,14 @@ function obtenerPiezas(escena: HTMLElement): PiezasIntro {
 function agregarSubidaLomos(linea: gsap.core.Timeline, lomos: NodeListOf<HTMLElement>): void {
   lomos.forEach((lomo, indice) => {
     const inicio = indice * STAGGER_LOMOS;
-    linea.from(lomo, { yPercent: SUBIDA_LOMOS_PORCENTAJE, clearProps: LIMPIAR }, inicio);
+    linea.from(
+      lomo,
+      { yPercent: SUBIDA_LOMOS_PORCENTAJE, clearProps: PROPIEDADES_ANIMADAS },
+      inicio,
+    );
     linea.from(
       lomo.querySelectorAll(SELECTOR_CARAS),
-      { autoAlpha: 0, clearProps: LIMPIAR },
+      { autoAlpha: 0, clearProps: PROPIEDADES_ANIMADAS },
       inicio,
     );
   });
@@ -51,10 +49,19 @@ function crearIntroCompleta({ lomos, numeros, losa }: PiezasIntro): gsap.core.Ti
   agregarSubidaLomos(linea, lomos);
   linea.from(
     numeros,
-    { scale: ESCALA_INICIAL_NUMERO, autoAlpha: 0, stagger: STAGGER_LOMOS, clearProps: LIMPIAR },
+    {
+      scale: ESCALA_INICIAL_NUMERO,
+      autoAlpha: 0,
+      stagger: STAGGER_LOMOS,
+      clearProps: PROPIEDADES_ANIMADAS,
+    },
     INICIO_NUMEROS,
   );
-  linea.from(losa, { xPercent: ENTRADA_LOSA_PORCENTAJE, autoAlpha: 0, clearProps: LIMPIAR }, 0);
+  linea.from(
+    losa,
+    { xPercent: ENTRADA_LOSA_PORCENTAJE, autoAlpha: 0, clearProps: PROPIEDADES_ANIMADAS },
+    0,
+  );
   return linea;
 }
 
@@ -64,7 +71,7 @@ function crearIntroReducida({ losa }: PiezasIntro, escena: HTMLElement): gsap.co
     autoAlpha: 0,
     duration: DURACION_INTRO,
     ease: EASE_ENTRADA,
-    clearProps: LIMPIAR,
+    clearProps: PROPIEDADES_ANIMADAS,
   });
 }
 
