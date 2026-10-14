@@ -1,11 +1,13 @@
 .escena {
-  --altura-piso: 22svh;
+  --altura-piso: 24svh;
   --altura-base-lomo: 44svh;
   --paso-altura-lomo: 6svh;
   --ancho-lomo: clamp(4.5rem, 8vw, 7.5rem);
   --profundidad-lomo: clamp(3rem, 6vw, 6rem);
   --giro-escena: -28deg;
+  --inclinacion-losa: 48deg;
 
+  position: relative;
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -88,4 +90,44 @@
   position: absolute;
   inset: 0;
   background: var(--side-shade);
+}
+
+/* Losa: placa apoyada en el piso, inclinada hacia el fondo */
+.losa {
+  position: absolute;
+  left: var(--espacio-l);
+  bottom: var(--espacio-s);
+  max-width: 20rem;
+  padding: var(--espacio-s) var(--espacio-m);
+  background: var(--cream);
+  color: var(--ink);
+  transform-origin: bottom left;
+  transform: rotateX(var(--inclinacion-losa));
+}
+
+.losa__nombre {
+  font-size: clamp(1.25rem, 2.2vw, 1.75rem);
+  text-transform: uppercase;
+}
+
+.losa__rol {
+  margin-top: var(--espacio-xs);
+  font-weight: var(--peso-texto-medio);
+}
+
+.losa__contacto {
+  font-style: normal;
+}
+
+.losa__enlaces {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-xs) var(--espacio-m);
+  margin-top: var(--espacio-s);
+  list-style: none;
+  font-size: 0.875rem;
+}
+
+.losa__enlace {
+  text-underline-offset: 0.2em;
 }
