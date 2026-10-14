@@ -6,25 +6,18 @@ function crearFrente(proyecto: Proyecto): HTMLSpanElement {
   return crearElemento('span', {
     clases: ['lomo__frente'],
     hijos: [
-      crearElemento('span', { clases: ['lomo__titulo'], texto: proyecto.titulo }),
       crearElemento('span', { clases: ['lomo__numero'], texto: String(proyecto.numero) }),
+      crearElemento('span', { clases: ['lomo__titulo'], texto: proyecto.titulo }),
     ],
   });
 }
 
-/** Variables CSS por lomo: el color sale del token y `--indice` escalona la altura. */
-function crearEstilo(proyecto: Proyecto, indice: number): string {
-  return [`--color-lomo: var(--${proyecto.color})`, `--indice: ${indice}`].join('; ');
-}
-
-export function crearLomo(proyecto: Proyecto, indice: number): HTMLButtonElement {
-  // La intro anima el <button> y el hover anima .lomo__cuerpo: así no pisan el mismo transform
+export function crearLomo(proyecto: Proyecto): HTMLButtonElement {
+  // Tres capas, un transform cada una: la intro/funda mueven el <button>, el hover
+  // mueve .lomo__cuerpo y la inclinación estática vive en .lomo__frente
   const cuerpo = crearElemento('span', {
     clases: ['lomo__cuerpo'],
-    hijos: [
-      crearFrente(proyecto),
-      crearElemento('span', { clases: ['lomo__lado'], atributos: { 'aria-hidden': 'true' } }),
-    ],
+    hijos: [crearFrente(proyecto)],
   });
   const lomo = crearElemento('button', {
     clases: ['lomo'],
@@ -32,7 +25,7 @@ export function crearLomo(proyecto: Proyecto, indice: number): HTMLButtonElement
       type: 'button',
       'data-id': proyecto.id,
       'aria-expanded': 'false',
-      style: crearEstilo(proyecto, indice),
+      style: `--color-lomo: var(--${proyecto.color})`,
     },
     hijos: [cuerpo],
   });
