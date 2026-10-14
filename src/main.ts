@@ -1,6 +1,9 @@
 import './shared/estilos/tokens.css';
 import './shared/estilos/base.css';
 import { iniciarEscena } from './features/escena';
+import { iniciarVinilo } from './features/vinilo';
 import { obtenerElemento } from './shared/utils';
 
-iniciarEscena(obtenerElemento('#app'));
+const app = obtenerElemento('#app');
+iniciarEscena(app);
+iniciarVinilo(app);

@@ -10,6 +10,8 @@
   --ink: #14100d;
   --side-shade: rgba(0, 0, 0, 0.35);
   --vinyl: #111;
+  --vinyl-groove: rgba(255, 255, 255, 0.05);
+  --vinyl-sheen: rgba(255, 255, 255, 0.14);
 
   /* Tipografia */
   --fuente-titulo: 'Syne', system-ui, sans-serif;

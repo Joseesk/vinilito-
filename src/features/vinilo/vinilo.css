@@ -1,0 +1,89 @@
+/* Capa sobre la escena donde aparece el disco; oculta hasta que se abre un proyecto */
+.vinilo-escenario {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  visibility: hidden;
+  opacity: 0;
+}
+
+.vinilo {
+  --tamanio-disco: min(60vmin, 28rem);
+
+  position: relative;
+  width: var(--tamanio-disco);
+  aspect-ratio: 1;
+}
+
+.vinilo__disco {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background:
+    /* Zonas lisas: borde exterior y salida hacia la etiqueta */
+    radial-gradient(
+      circle,
+      transparent 0 36%,
+      var(--vinyl) 36% 38%,
+      transparent 38% 96%,
+      var(--vinyl) 96%
+    ),
+    /* Surcos */ repeating-radial-gradient(circle, var(--vinyl) 0 2px, var(--vinyl-groove) 3px 4px);
+  box-shadow: 0 var(--espacio-m) var(--espacio-xl) var(--side-shade);
+}
+
+.vinilo__etiqueta {
+  position: absolute;
+  inset: 32%;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 50%;
+  background: var(--color-etiqueta);
+}
+
+/* Agujero central: deja ver el fondo */
+.vinilo__etiqueta::after {
+  content: '';
+  position: absolute;
+  inset: 47%;
+  border-radius: 50%;
+  background: var(--bg);
+}
+
+/* Arriba del agujero central para que no lo tape */
+.vinilo__numero {
+  align-self: start;
+  margin-top: 14%;
+  font-family: var(--fuente-titulo);
+  font-weight: var(--peso-titulo);
+  font-size: calc(var(--tamanio-disco) * 0.08);
+  line-height: 1;
+  color: var(--color-numero);
+}
+
+.vinilo__portada {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Reflejo fijo de la luz: dos haces opuestos, como en un disco real */
+.vinilo__brillo {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 20deg,
+    transparent 0deg,
+    var(--vinyl-sheen) 25deg,
+    transparent 55deg 180deg,
+    var(--vinyl-sheen) 205deg,
+    transparent 235deg
+  );
+  pointer-events: none;
+}
