@@ -1,6 +1,14 @@
-import { Color, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
+import {
+  ACESFilmicToneMapping,
+  Color,
+  PCFSoftShadowMap,
+  PerspectiveCamera,
+  Scene,
+  WebGLRenderer,
+} from 'three';
 import { crearElemento, leerToken } from '../../shared/utils';
 import type { ConfiguracionCalidad } from './calidad';
+import { construirEstudio } from './crearEstudio';
 
 /** Lente algo tele: una repisa vista de frente se deforma menos que con gran angular. */
 const CAMPO_VISION = 35;
@@ -23,6 +31,9 @@ function crearRenderer(canvas: HTMLCanvasElement, calidad: ConfiguracionCalidad)
   });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, calidad.dprMaximo));
   renderer.shadowMap.enabled = calidad.sombras;
+  renderer.shadowMap.type = PCFSoftShadowMap;
+  // Curva de tono "de cine": las altas luces del spot no se queman a blanco
+  renderer.toneMapping = ACESFilmicToneMapping;
   return renderer;
 }
 
@@ -65,8 +76,13 @@ export function montarEscena3d(contenedor: HTMLElement, calidad: ConfiguracionCa
     clases: ['escena3d'],
     atributos: { 'aria-hidden': 'true', 'data-calidad': calidad.nivel },
   });
-  contenedor.prepend(canvas);
+  const vineta = crearElemento('div', {
+    clases: ['escena3d__vineta'],
+    atributos: { 'aria-hidden': 'true' },
+  });
+  contenedor.prepend(canvas, vineta);
   const escena3d = crearEscena3d(canvas, calidad);
+  construirEstudio(escena3d, calidad);
   escena3d.solicitarRender();
   // Se registra después del render pedido: en el mismo frame corre justo detrás de él
   requestAnimationFrame(() => {

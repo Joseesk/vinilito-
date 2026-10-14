@@ -28,6 +28,16 @@
 
   /* Estudio 3D (Sprint Y): el canvas lee estos valores con leerToken() */
   --estudio-pared: #1f2421;
+  --estudio-luz: #ffd7a1;
+  --estudio-ambiente: #3a3f4a;
+  --nogal: #3e2716;
+  --nogal-veta: #160b05;
+  --metal-oscuro: #2b2b2b;
+  /* Motas para texturas procedurales: casi invisibles, solo rompen lo liso */
+  --textura-luz: rgba(255, 255, 255, 0.035);
+  --textura-sombra: rgba(0, 0, 0, 0.07);
+  --sombra-falsa: rgba(0, 0, 0, 0.55);
+  --vineta: rgba(0, 0, 0, 0.6);
 
   /* Vinilo realista (único lugar con degradados) */
   --vinyl: #111;

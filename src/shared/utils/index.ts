@@ -1,3 +1,4 @@
+export { crearAleatorio, entre } from './aleatorio';
 export { crearElemento, leerToken, obtenerElemento } from './dom';
 export { clasificarCalidad, debeCargar3d, esRedLenta } from './dispositivo';
 export { combinarDesconexiones } from './funciones';
