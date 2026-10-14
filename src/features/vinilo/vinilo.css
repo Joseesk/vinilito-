@@ -155,15 +155,18 @@
   .vinilo-escenario {
     align-items: start;
     justify-items: center;
-    padding: var(--espacio-xl) 0 0;
+    padding: var(--espacio-l) 0 0;
     background: var(--velo);
     /* Tocar el velo cierra: si no, el toque caería en un lomo de abajo y cambiaría de proyecto */
     pointer-events: auto;
   }
 
-  /* En móvil el disco sale hacia abajo: no hace falta compensar a la derecha */
+  /*
+   * El disco sale hacia abajo (no hace falta compensar a la derecha). Tamaño acotado por
+   * el alto: funda + 55% de disco tienen que entrar arriba de la ficha.
+   */
   .vinilo-conjunto {
-    --tamanio-disco: min(70vw, 40svh, 20rem);
+    --tamanio-disco: min(60vw, 30svh, 18rem);
 
     margin-right: 0;
   }
