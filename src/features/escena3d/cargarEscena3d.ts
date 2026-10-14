@@ -30,6 +30,8 @@ async function cargar(contenedor: HTMLElement, senales: SenalesDispositivo): Pro
   try {
     // Import dinámico: `three` va en un chunk aparte y no demora el primer paint
     const { montarEscena3d } = await import('./renderizador');
+    // Los lomos se imprimen en canvas: sin esto saldrían con la fuente de respaldo
+    await document.fonts.ready;
     montarEscena3d(contenedor, detectarCalidad(senales));
   } catch {
     // Sin 3D (red caída, GPU bloqueada): queda la versión CSS, que es el respaldo

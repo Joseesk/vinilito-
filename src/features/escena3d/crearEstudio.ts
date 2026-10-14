@@ -8,20 +8,22 @@ import {
   SpotLight,
   type Texture,
 } from 'three';
+import { PROYECTOS } from '../../data/proyectos';
 import { leerToken } from '../../shared/utils';
 import type { ConfiguracionCalidad } from './calidad';
 import { crearRepisa3d, MEDIDAS_REPISA } from './crearRepisa3d';
 import type { Escena3d } from './renderizador';
 import { crearTexturasEstudio } from './texturas';
+import { type FundaEnRepisa, ubicarFundas } from './ubicarFundas';
 
 /** La pared queda apenas detrás del fondo de la repisa (las ménsulas se atornillan ahí). */
 const Z_PARED = -MEDIDAS_REPISA.profundidad / 2 - 0.001;
 const PARED = { ancho: 6, alto: 4, centroY: 0.4, repeticion: 3 } as const;
 /** Spot cálido desde arriba y algo adelante, como una lámpara de techo dirigida. */
-const SPOT = { x: 0.15, y: 1.3, z: 0.9, intensidad: 22, angulo: 0.55, penumbra: 0.75 } as const;
+const SPOT = { x: 0.15, y: 1.3, z: 0.9, intensidad: 16, angulo: 0.55, penumbra: 0.75 } as const;
 const AMBIENTE_INTENSIDAD = 0.7;
 const LADO_MAPA_SOMBRAS = 1024;
-const CAMARA_GENERAL = { x: 0, y: 0.2, z: 1.1, mirarY: 0.12 } as const;
+const CAMARA_GENERAL = { x: 0, y: 0.19, z: 0.82, mirarY: 0.15 } as const;
 
 function crearPared(textura: Texture): Mesh {
   textura.repeat.set(PARED.repeticion, PARED.repeticion);
@@ -57,11 +59,11 @@ function crearSombraFalsa(textura: Texture): Mesh {
   return sombra;
 }
 
-/** Arma la habitación, la luz y la repisa, y deja la cámara en la vista general. */
+/** Arma la habitación, la luz, la repisa y las fundas; deja la cámara en la vista general. */
 export function construirEstudio(
   { escena, camara }: Escena3d,
   calidad: ConfiguracionCalidad,
-): void {
+): readonly FundaEnRepisa[] {
   const texturas = crearTexturasEstudio(calidad.ladoTextura);
   const ambiente = new HemisphereLight(
     new Color(leerToken('--estudio-ambiente')),
@@ -70,10 +72,12 @@ export function construirEstudio(
   );
   const spot = crearSpot(calidad);
   escena.add(crearPared(texturas.pared), ambiente, spot, spot.target);
-  escena.add(crearRepisa3d(texturas.nogal));
+  const { grupo, fundas } = ubicarFundas(PROYECTOS, calidad);
+  escena.add(crearRepisa3d(texturas.nogal), grupo);
   if (!calidad.sombras) {
     escena.add(crearSombraFalsa(texturas.sombraFalsa));
   }
   camara.position.set(CAMARA_GENERAL.x, CAMARA_GENERAL.y, CAMARA_GENERAL.z);
   camara.lookAt(0, CAMARA_GENERAL.mirarY, 0);
+  return fundas;
 }

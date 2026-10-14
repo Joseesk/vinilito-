@@ -2,10 +2,10 @@ import { BoxGeometry, Group, Mesh, MeshStandardMaterial, type Texture } from 'th
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
 import { leerToken } from '../../shared/utils';
 
-/** Medidas en metros: la repisa entra 10 discos con aire a los lados. */
+/** Medidas en metros: entra 10 discos a lo largo y una funda de 31.4 cm de fondo. */
 export const MEDIDAS_REPISA = {
   largo: 0.9,
-  profundidad: 0.26,
+  profundidad: 0.33,
   grosor: 0.032,
 } as const;
 
