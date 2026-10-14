@@ -38,6 +38,9 @@
   --peso-texto: 400;
   --peso-texto-medio: 500;
 
+  /* Layout compartido: la ficha (derecha) y el escenario del vinilo se reparten la pantalla */
+  --ancho-ficha: min(26rem, 34vw);
+
   /* Espacios */
   --espacio-xs: 0.25rem;
   --espacio-s: 0.5rem;

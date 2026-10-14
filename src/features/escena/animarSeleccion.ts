@@ -1,29 +1,31 @@
 import {
   DURACION_APERTURA,
+  DURACION_FUNDA,
   EASE_VINILO,
-  esMovil,
   gsap,
   prefiereMenosMovimiento,
 } from '../../shared/animacion';
 import { escuchar } from '../../shared/eventos';
-import { combinarDesconexiones } from '../../shared/utils';
+import { combinarDesconexiones, obtenerElemento } from '../../shared/utils';
 import type { PayloadProyecto } from '../../shared/types/eventos';
 import { PROPIEDADES_ANIMADAS } from './constantes';
 import { buscarLomo, obtenerLomos } from './lomos';
 
-const SALIDA_FUNDA_PORCENTAJE = -18;
-const AVANCE_FUNDA_PX = 60;
-/** En móvil el lomo está acostado: la funda sale hacia la derecha. */
-const SALIDA_FUNDA_MOVIL_PORCENTAJE = 8;
+/** El lomo sube un poco y se desvanece mientras la funda (del vinilo) toma su lugar. */
+const SUBIDA_LOMO_PORCENTAJE = -15;
 const OPACIDAD_ATENUADA = 0.2;
 
-/** Misma duración y ease que el disco: funda y vinilo se leen como un solo movimiento. */
+/** Misma duración y ease que la apertura del vinilo: se leen como un solo movimiento. */
 function crearSeleccion(escena: HTMLElement, id: string): gsap.core.Timeline | null {
   const elegido = buscarLomo(escena, id);
   if (!elegido) {
     return null;
   }
-  const otros = obtenerLomos(escena).filter((lomo) => lomo !== elegido);
+  // El cartel también se atenúa: con un disco abierto, el resto de la pared es fondo
+  const otros = [
+    ...obtenerLomos(escena).filter((lomo) => lomo !== elegido),
+    obtenerElemento('.cartel', escena),
+  ];
   const linea = gsap.timeline({
     defaults: { duration: DURACION_APERTURA, ease: EASE_VINILO },
     onReverseComplete: () => {
@@ -32,12 +34,11 @@ function crearSeleccion(escena: HTMLElement, id: string): gsap.core.Timeline | n
     },
   });
   linea.to(otros, { opacity: OPACIDAD_ATENUADA }, 0);
-  if (!prefiereMenosMovimiento()) {
-    const salida = esMovil()
-      ? { xPercent: SALIDA_FUNDA_MOVIL_PORCENTAJE }
-      : { yPercent: SALIDA_FUNDA_PORCENTAJE, z: AVANCE_FUNDA_PX };
-    linea.to(elegido, salida, 0);
-  }
+  // Desaparece en la misma duración que gira la funda: se lee como que el lomo "es" la funda
+  const salida = prefiereMenosMovimiento()
+    ? { opacity: 0 }
+    : { yPercent: SUBIDA_LOMO_PORCENTAJE, opacity: 0 };
+  linea.to(elegido, { ...salida, duration: DURACION_FUNDA }, 0);
   return linea;
 }
 

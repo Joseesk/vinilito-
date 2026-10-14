@@ -1,5 +1,6 @@
 import { PROYECTOS } from '../../data/proyectos';
 import { emitir, escuchar } from '../../shared/eventos';
+import type { PayloadSeleccion } from '../../shared/types/eventos';
 import { combinarDesconexiones } from '../../shared/utils';
 import { crearApertura, iniciarGiro } from './abrirVinilo';
 import { crearVinilo } from './crearVinilo';
@@ -19,22 +20,22 @@ class ControlVinilo {
   private estado: EstadoVinilo = 'cerrado';
   private sesion: SesionVinilo | null = null;
   /** Lomo elegido mientras otro estaba abierto: se abre al terminar el cierre. */
-  private pendiente: string | null = null;
+  private pendiente: PayloadSeleccion | null = null;
 
   constructor(escenario: HTMLElement) {
     this.escenario = escenario;
   }
 
-  seleccionar(id: string): void {
+  seleccionar(seleccion: PayloadSeleccion): void {
     if (this.estado === 'cerrado') {
-      this.abrir(id);
+      this.abrir(seleccion);
       return;
     }
     // Durante una animación se ignora el click: evita estados cruzados
     if (this.estado !== 'abierto' || !this.sesion) {
       return;
     }
-    this.pendiente = this.sesion.id === id ? null : id;
+    this.pendiente = this.sesion.id === seleccion.id ? null : seleccion;
     this.cerrar();
   }
 
@@ -53,18 +54,19 @@ class ControlVinilo {
     this.sesion.apertura.reverse();
   }
 
-  private abrir(id: string): void {
+  private abrir({ id, origen }: PayloadSeleccion): void {
     const proyecto = PROYECTOS.find((candidato) => candidato.id === id);
     if (!proyecto) {
       return;
     }
-    const vinilo = crearVinilo(proyecto);
-    this.escenario.replaceChildren(vinilo);
-    const apertura = crearApertura(this.escenario, vinilo, {
-      alAbrir: () => this.terminarApertura(),
-      alCerrar: () => this.terminarCierre(),
-    });
-    this.sesion = { id, apertura, giro: iniciarGiro(vinilo) };
+    const conjunto = crearVinilo(proyecto);
+    // Montado antes de crear la apertura: el FLIP mide su posición final
+    this.escenario.replaceChildren(conjunto);
+    const apertura = crearApertura(
+      { escenario: this.escenario, conjunto, origen },
+      { alAbrir: () => this.terminarApertura(), alCerrar: () => this.terminarCierre() },
+    );
+    this.sesion = { id, apertura, giro: iniciarGiro(conjunto) };
     this.estado = 'abriendo';
     emitir('vinilo:abriendo', { id });
     apertura.play();
@@ -93,10 +95,10 @@ class ControlVinilo {
   }
 
   private abrirPendiente(): void {
-    const id = this.pendiente;
+    const seleccion = this.pendiente;
     this.pendiente = null;
-    if (id) {
-      this.abrir(id);
+    if (seleccion) {
+      this.abrir(seleccion);
     }
   }
 }
@@ -105,7 +107,7 @@ class ControlVinilo {
 export function conectarControlVinilo(escenario: HTMLElement): () => void {
   const control = new ControlVinilo(escenario);
   return combinarDesconexiones([
-    escuchar('proyecto:seleccionado', ({ id }) => control.seleccionar(id)),
+    escuchar('proyecto:seleccionado', (seleccion) => control.seleccionar(seleccion)),
     escuchar('vinilo:cerrar', () => control.cerrar()),
   ]);
 }

@@ -1,6 +1,8 @@
 // Duraciones en segundos (unidad de GSAP)
 export const DURACION_INTRO = 0.9;
 export const DURACION_APERTURA = 1;
+/** Primera parte de la apertura: el lomo se va y la funda gira hasta quedar de frente. */
+export const DURACION_FUNDA = DURACION_APERTURA * 0.55;
 export const DURACION_FICHA = 0.5;
 export const RETRASO_FICHA = 0.3;
 /** Una vuelta a 33⅓ rpm, como un vinilo real. */

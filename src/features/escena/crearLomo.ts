@@ -29,6 +29,10 @@ export function crearLomo(proyecto: Proyecto): HTMLButtonElement {
     },
     hijos: [cuerpo],
   });
-  lomo.addEventListener('click', () => emitir('proyecto:seleccionado', { id: proyecto.id }));
+  lomo.addEventListener('click', () => {
+    const { left, top, width, height } = lomo.getBoundingClientRect();
+    const origen = { x: left, y: top, ancho: width, alto: height };
+    emitir('proyecto:seleccionado', { id: proyecto.id, origen });
+  });
   return lomo;
 }

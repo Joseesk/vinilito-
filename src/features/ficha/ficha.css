@@ -4,7 +4,7 @@
   /* Centrado vertical sin transform: GSAP usa transform para la entrada */
   inset-block: 0;
   right: var(--espacio-xl);
-  width: min(26rem, 34vw);
+  width: var(--ancho-ficha);
   height: fit-content;
   margin-block: auto;
   background: var(--papel);

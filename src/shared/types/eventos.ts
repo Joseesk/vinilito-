@@ -2,9 +2,22 @@ export interface PayloadProyecto {
   readonly id: string;
 }
 
+/** Rectángulo en coordenadas de viewport: un dato, no un nodo, para no acoplar features. */
+export interface Rectangulo {
+  readonly x: number;
+  readonly y: number;
+  readonly ancho: number;
+  readonly alto: number;
+}
+
+/** El vinilo necesita saber desde dónde sale la funda (el lomo clickeado). */
+export interface PayloadSeleccion extends PayloadProyecto {
+  readonly origen: Rectangulo;
+}
+
 /** Mapa de eventos entre features (sección 1 de sprint.md). `undefined` = sin payload. */
 export interface EventosApp {
-  'proyecto:seleccionado': PayloadProyecto;
+  'proyecto:seleccionado': PayloadSeleccion;
   'vinilo:abriendo': PayloadProyecto;
   'vinilo:abierto': PayloadProyecto;
   'vinilo:cerrar': undefined;

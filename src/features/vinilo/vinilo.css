@@ -5,19 +5,69 @@
   display: grid;
   /* Disco a la izquierda: la ficha ocupa la derecha */
   align-items: center;
-  justify-items: start;
-  padding-left: calc(var(--espacio-xl) * 2);
+  justify-items: center;
+  /* Centra funda + disco en el espacio que deja libre la ficha (derecha) */
+  padding-right: calc(var(--ancho-ficha) + var(--espacio-xl));
+  /* Para el giro de canto a frente de la funda */
+  perspective: 1200px;
   pointer-events: none;
   visibility: hidden;
   opacity: 0;
 }
 
-.vinilo {
-  --tamanio-disco: min(60vmin, 28rem);
+/* Funda y disco ocupan el mismo cuadrado; el disco (detrás) sale deslizándose */
+.vinilo-conjunto {
+  --tamanio-disco: min(52vmin, 24rem);
 
   position: relative;
+  /* El disco asoma 55% a la derecha: este margen hace que el grupo visual quede centrado */
+  margin-right: calc(var(--tamanio-disco) * 0.55);
   width: var(--tamanio-disco);
   aspect-ratio: 1;
+}
+
+/* Un poco más chico que la funda, como un disco real dentro de su sobre */
+.vinilo {
+  position: absolute;
+  inset: 3%;
+  /* Oculto hasta que la funda llega (lo muestra la apertura) */
+  visibility: hidden;
+  opacity: 0;
+}
+
+.funda {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: var(--color-disco);
+  color: var(--tinta);
+  border: var(--borde);
+  box-shadow: var(--sombra);
+}
+
+.funda__numero {
+  font-family: var(--fuente-titulo);
+  font-weight: var(--peso-titulo);
+  font-size: calc(var(--tamanio-disco) * 0.45);
+  line-height: 1;
+}
+
+.funda__titulo {
+  position: absolute;
+  inset: auto var(--espacio-m) var(--espacio-m);
+  font-weight: var(--peso-texto-medio);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.funda__portada {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .vinilo__disco {
@@ -48,7 +98,7 @@
   place-items: center;
   overflow: hidden;
   border-radius: 50%;
-  background: var(--color-etiqueta);
+  background: var(--color-disco);
 }
 
 /* Agujero central: deja ver el fondo */
@@ -106,7 +156,10 @@
     pointer-events: auto;
   }
 
-  .vinilo {
-    --tamanio-disco: min(70vw, 45svh, 20rem);
+  /* En móvil el disco sale hacia abajo: no hace falta compensar a la derecha */
+  .vinilo-conjunto {
+    --tamanio-disco: min(70vw, 40svh, 20rem);
+
+    margin-right: 0;
   }
 }
