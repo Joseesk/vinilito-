@@ -50,61 +50,70 @@ function crearBoton(funda: FundaEnRepisa): HTMLButtonElement {
   return boton;
 }
 
-function conectarInclinacion(
-  boton: HTMLButtonElement,
-  funda: FundaEnRepisa,
-  render: () => void,
-): void {
-  const inclinar = (angulo: number): void => {
-    gsap.to(funda.inclinador.rotation, {
-      x: angulo,
-      duration: prefiereMenosMovimiento() ? 0 : DURACION_HOVER,
-      ease: 'power2.out',
-      overwrite: true,
-      onUpdate: render,
-    });
-  };
-  boton.addEventListener('pointerenter', () => inclinar(INCLINACION_HOVER));
-  boton.addEventListener('focus', () => inclinar(INCLINACION_HOVER));
-  boton.addEventListener('pointerleave', () => inclinar(0));
-  boton.addEventListener('blur', () => inclinar(0));
+interface Hover {
+  readonly render: () => void;
+  /** Mientras hay un disco abierto la animación es dueña de la inclinación. */
+  readonly estaBloqueado: () => boolean;
 }
 
-function conectarEstado(botones: readonly HTMLButtonElement[]): () => void {
-  const buscar = (id: string): HTMLButtonElement | undefined =>
-    botones.find((boton) => boton.dataset['id'] === id);
+function inclinar(funda: FundaEnRepisa, angulo: number, render: () => void): void {
+  gsap.to(funda.inclinador.rotation, {
+    x: angulo,
+    duration: prefiereMenosMovimiento() ? 0 : DURACION_HOVER,
+    ease: 'power2.out',
+    overwrite: true,
+    onUpdate: render,
+  });
+}
+
+function conectarInclinacion(boton: HTMLButtonElement, funda: FundaEnRepisa, hover: Hover): void {
+  const alEntrar = (): void => {
+    if (!hover.estaBloqueado()) {
+      inclinar(funda, INCLINACION_HOVER, hover.render);
+    }
+  };
+  const alSalir = (): void => {
+    if (!hover.estaBloqueado()) {
+      inclinar(funda, 0, hover.render);
+    }
+  };
+  boton.addEventListener('pointerenter', alEntrar);
+  boton.addEventListener('focus', alEntrar);
+  boton.addEventListener('pointerleave', alSalir);
+  boton.addEventListener('blur', alSalir);
+}
+
+interface EstadoCapa {
+  readonly botones: readonly HTMLButtonElement[];
+  readonly fundas: readonly FundaEnRepisa[];
+  readonly render: () => void;
+  readonly bloquear: (valor: boolean) => void;
+}
+
+function conectarEstado({ botones, fundas, render, bloquear }: EstadoCapa): () => void {
+  const indice = (id: string): number => fundas.findIndex((funda) => funda.id === id);
   return combinarDesconexiones([
-    escuchar('vinilo:abriendo', ({ id }) => buscar(id)?.setAttribute('aria-expanded', 'true')),
+    escuchar('vinilo:abriendo', ({ id }) => {
+      bloquear(true);
+      botones[indice(id)]?.setAttribute('aria-expanded', 'true');
+    }),
     escuchar('vinilo:cerrado', ({ id }) => {
-      const boton = buscar(id);
-      boton?.setAttribute('aria-expanded', 'false');
-      if (boton) {
-        devolverFocoSiSePerdio(boton);
+      bloquear(false);
+      const [boton, funda] = [botones[indice(id)], fundas[indice(id)]];
+      if (!boton || !funda) {
+        return;
       }
+      boton.setAttribute('aria-expanded', 'false');
+      // Vuelve derecha a la fila; si el foco regresa a su botón, el `focus` la vuelve a inclinar
+      inclinar(funda, 0, render);
+      devolverFocoSiSePerdio(boton);
     }),
   ]);
 }
 
-/**
- * Un `<button>` transparente por funda, alineado con su proyección en pantalla: teclado,
- * foco, lectores de pantalla y clicks funcionan como DOM normal, sin raycasting.
- */
-export function crearCapaAccesible(piezas: PiezasCapa): {
-  readonly nav: HTMLElement;
-  readonly ubicar: () => void;
-} {
-  const botones = piezas.fundas.map((funda) => {
-    const boton = crearBoton(funda);
-    conectarInclinacion(boton, funda, piezas.solicitarRender);
-    return boton;
-  });
-  const nav = crearElemento('nav', {
-    clases: ['capa3d'],
-    atributos: { 'aria-label': 'Proyectos' },
-    hijos: botones,
-  });
+function ubicarBotones(botones: readonly HTMLButtonElement[], piezas: PiezasCapa): () => void {
   const esquinas = piezas.fundas.map(esquinasLomo);
-  const ubicar = (): void => {
+  return () => {
     piezas.fundas.forEach((funda, indice) => {
       const { x, y, ancho, alto } = proyectarPuntos(esquinas[indice] ?? [], funda.malla, piezas);
       Object.assign(botones[indice]?.style ?? {}, {
@@ -115,6 +124,37 @@ export function crearCapaAccesible(piezas: PiezasCapa): {
       });
     });
   };
-  conectarEstado(botones);
-  return { nav, ubicar };
+}
+
+/**
+ * Un `<button>` transparente por funda, alineado con su proyección en pantalla: teclado,
+ * foco, lectores de pantalla y clicks funcionan como DOM normal, sin raycasting.
+ */
+export function crearCapaAccesible(piezas: PiezasCapa): {
+  readonly nav: HTMLElement;
+  readonly ubicar: () => void;
+} {
+  let bloqueado = false;
+  const hover: Hover = { render: piezas.solicitarRender, estaBloqueado: () => bloqueado };
+  const botones = piezas.fundas.map((funda) => {
+    const boton = crearBoton(funda);
+    conectarInclinacion(boton, funda, hover);
+    return boton;
+  });
+  const nav = crearElemento('nav', {
+    clases: ['capa3d'],
+    atributos: { 'aria-label': 'Proyectos' },
+    hijos: botones,
+  });
+  conectarEstado({
+    botones,
+    fundas: piezas.fundas,
+    render: piezas.solicitarRender,
+    bloquear: (valor) => {
+      bloqueado = valor;
+      // Con la cámara en otra vista los botones quedan sobre otra cosa: sin clicks hasta volver
+      nav.classList.toggle('capa3d--bloqueada', valor);
+    },
+  });
+  return { nav, ubicar: ubicarBotones(botones, piezas) };
 }

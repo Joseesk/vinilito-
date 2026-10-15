@@ -1,6 +1,7 @@
 import { emitir, escuchar } from '../../shared/eventos';
 import { crearElemento } from '../../shared/utils';
 import type { ConfiguracionCalidad } from './calidad';
+import { conectarAnimadorEstudio } from './animadorEstudio';
 import { crearCapaAccesible } from './capaAccesible';
 import { construirEstudio } from './crearEstudio';
 import { animarIntro3d } from './intro3d';
@@ -33,6 +34,7 @@ export function montarEscena3d(
   const escena3d = crearEscena3d(lienzo, calidad);
   const { fundas, luces } = construirEstudio(escena3d, calidad);
   const capa = crearCapaAccesible({ ...escena3d, fundas });
+  conectarAnimadorEstudio({ ...escena3d, fundas });
   contenedor.append(capa.nav);
   escena3d.alRedimensionar(capa.ubicar);
   escena3d.solicitarRender();

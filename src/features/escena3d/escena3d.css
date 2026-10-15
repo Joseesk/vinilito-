@@ -29,3 +29,12 @@
   outline: 3px solid var(--estudio-luz);
   outline-offset: 3px;
 }
+
+/* Disco abierto: la cámara se fue de la repisa, los botones no deben recibir clicks */
+.capa3d--bloqueada {
+  pointer-events: none;
+}
+
+.capa3d--bloqueada .capa3d__funda {
+  pointer-events: none;
+}

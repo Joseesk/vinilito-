@@ -16,6 +16,8 @@ interface SesionAnimacion {
 class AnimadorCss {
   private readonly escenario: HTMLElement;
   private sesion: SesionAnimacion | null = null;
+  /** Al retirarse con un disco abierto: se desconecta recién cuando terminó de cerrarlo. */
+  private alRetirarse: (() => void) | null = null;
 
   constructor(escenario: HTMLElement) {
     this.escenario = escenario;
@@ -50,12 +52,24 @@ class AnimadorCss {
     this.sesion.apertura.reverse();
   }
 
+  /** Con el estudio 3D listo este animador sobra; si hay un disco abierto, primero lo cierra. */
+  retirar(desconectar: () => void): void {
+    if (!this.sesion) {
+      desconectar();
+      return;
+    }
+    this.alRetirarse = desconectar;
+    emitir('vinilo:cerrar');
+  }
+
   private terminarCierre(): void {
     const id = this.sesion?.id;
     this.descartar();
     if (id !== undefined) {
       emitir('animacion:cerrada', { id });
     }
+    this.alRetirarse?.();
+    this.alRetirarse = null;
   }
 
   /** Quita lo que haya en escena sin avisar (también sirve si quedó algo de antes). */
@@ -70,8 +84,10 @@ class AnimadorCss {
 /** Devuelve la función que desconecta los listeners. */
 export function conectarAnimadorCss(escenario: HTMLElement): () => void {
   const animador = new AnimadorCss(escenario);
-  return combinarDesconexiones([
+  const desconectar = combinarDesconexiones([
     escuchar('vinilo:abriendo', (seleccion) => animador.abrir(seleccion)),
     escuchar('vinilo:cerrando', () => animador.cerrar()),
+    escuchar('escena3d:lista', () => animador.retirar(desconectar)),
   ]);
+  return desconectar;
 }

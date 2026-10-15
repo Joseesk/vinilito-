@@ -11,6 +11,7 @@ import {
 import { PROYECTOS } from '../../data/proyectos';
 import { leerToken } from '../../shared/utils';
 import type { ConfiguracionCalidad } from './calidad';
+import { ubicarCamara, VISTA_GENERAL } from './camara';
 import { crearRepisa3d, MEDIDAS_REPISA } from './crearRepisa3d';
 import type { Escena3d } from './renderizador';
 import { crearRinconTocadiscos, type RinconTocadiscos } from './rinconTocadiscos';
@@ -24,7 +25,6 @@ const PARED = { ancho: 6, alto: 4, centroY: 0.4, repeticion: 3 } as const;
 const SPOT = { x: 0.15, y: 1.3, z: 0.9, intensidad: 16, angulo: 0.55, penumbra: 0.75 } as const;
 const AMBIENTE_INTENSIDAD = 0.7;
 const LADO_MAPA_SOMBRAS = 1024;
-const CAMARA_GENERAL = { x: 0, y: 0.19, z: 0.82, mirarY: 0.15 } as const;
 
 function crearPared(textura: Texture): Mesh {
   textura.repeat.set(PARED.repeticion, PARED.repeticion);
@@ -94,7 +94,6 @@ export function construirEstudio(
   if (!calidad.sombras) {
     escena.add(crearSombraFalsa(texturas.sombraFalsa));
   }
-  camara.position.set(CAMARA_GENERAL.x, CAMARA_GENERAL.y, CAMARA_GENERAL.z);
-  camara.lookAt(0, CAMARA_GENERAL.mirarY, 0);
+  ubicarCamara(camara, VISTA_GENERAL);
   return { fundas, luces: { spot, ambiente }, rincon };
 }
