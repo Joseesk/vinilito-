@@ -1,5 +1,10 @@
 import { type Mesh, type PerspectiveCamera, Vector3 } from 'three';
-import { DURACION_VUELTA_DISCO, EASE_GIRO, gsap } from '../../shared/animacion';
+import {
+  DURACION_VUELTA_DISCO,
+  EASE_GIRO,
+  gsap,
+  prefiereMenosMovimiento,
+} from '../../shared/animacion';
 import { agregarViajeCamara, obtenerVistas } from './camara';
 import { MEDIDAS_DISCO } from './crearDisco3d';
 import { MEDIDAS_FUNDA } from './crearFunda3d';
@@ -148,6 +153,9 @@ export function agregarDiscoAlPlato(
     onUpdate: piezas.solicitarRender,
   });
   // `call` se dispara en las dos direcciones: hacia adelante arranca, en reversa se pausa
-  linea.call(() => (linea.reversed() ? giro.pause() : giro.play()), [], enT(T.aguja.inicio));
+  // Con movimiento reducido el disco queda en el plato sin girar
+  if (!prefiereMenosMovimiento()) {
+    linea.call(() => (linea.reversed() ? giro.pause() : giro.play()), [], enT(T.aguja.inicio));
+  }
   return giro;
 }

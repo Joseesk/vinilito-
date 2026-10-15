@@ -1,5 +1,7 @@
 import type { Mesh, PerspectiveCamera, Scene, Texture } from 'three';
+import { prefiereMenosMovimiento } from '../../shared/animacion';
 import { PROYECTOS } from '../../data/proyectos';
+import type { Proyecto } from '../../shared/types/proyecto';
 import { emitir, escuchar } from '../../shared/eventos';
 import { combinarDesconexiones } from '../../shared/utils';
 import { crearSacarFunda } from './animarSacarDisco';
@@ -9,6 +11,7 @@ import { crearDisco3d } from './crearDisco3d';
 import { crearFundaInterna } from './crearFundaInterna';
 import type { Tocadiscos } from './crearTocadiscos';
 import { liberarMalla } from './liberar';
+import { envolverEnFundido } from './transicionReducida';
 import type { FundaEnRepisa } from './ubicarFundas';
 
 /** El cierre va más rápido que la apertura: guardar un disco es más ágil que sacarlo. */
@@ -18,6 +21,7 @@ export interface PiezasAnimador {
   readonly escena: Scene;
   readonly camara: PerspectiveCamera;
   readonly entorno: Texture;
+  readonly lienzo: HTMLCanvasElement;
   readonly ladoTextura: number;
   readonly fundas: readonly FundaEnRepisa[];
   readonly tocadiscos: Tocadiscos;
@@ -27,6 +31,8 @@ export interface PiezasAnimador {
 interface Sesion {
   readonly id: string;
   readonly linea: gsap.core.Timeline;
+  /** La secuencia real (con movimiento reducido `linea` es el fundido que la envuelve). */
+  readonly completa: gsap.core.Timeline;
   readonly giro: gsap.core.Tween;
   /** Se crean al abrir y se liberan al cerrar (GPU incluida). */
   readonly temporales: readonly Mesh[];
@@ -47,21 +53,29 @@ class AnimadorEstudio {
     if (!funda || !proyecto) {
       return;
     }
-    const { escena, entorno, ladoTextura, tocadiscos } = this.piezas;
-    const disco = crearDisco3d(proyecto, { ladoTextura, entorno });
-    const interna = crearFundaInterna(ladoTextura);
-    escena.add(disco);
-    funda.malla.add(interna);
-    const linea = crearSacarFunda({ ...this.piezas, funda });
-    const giro = agregarDiscoAlPlato(linea, { ...this.piezas, funda, disco, interna, tocadiscos });
+    const { linea, completa, giro, temporales } = this.armar(funda, proyecto);
     linea.eventCallback('onComplete', () => emitir('animacion:abierta', { id }));
     linea.eventCallback('onReverseComplete', () => this.terminarCierre());
-    this.sesion = { id, linea, giro, temporales: [disco, interna] };
+    this.sesion = { id, linea, completa, giro, temporales };
     void aplicarPortada(proyecto.portada, {
       materialPortada: funda.malla.material[0],
       alAplicar: this.piezas.solicitarRender,
     });
     linea.timeScale(1).play();
+  }
+
+  /** Disco y funda interna se crean por apertura; con movimiento reducido, fundido. */
+  private armar(funda: FundaEnRepisa, proyecto: Proyecto): Omit<Sesion, 'id'> {
+    const { escena, entorno, ladoTextura, tocadiscos, lienzo } = this.piezas;
+    const disco = crearDisco3d(proyecto, { ladoTextura, entorno });
+    const interna = crearFundaInterna(ladoTextura);
+    escena.add(disco);
+    funda.malla.add(interna);
+    const completa = crearSacarFunda({ ...this.piezas, funda });
+    const piezasDisco = { ...this.piezas, funda, disco, interna, tocadiscos };
+    const giro = agregarDiscoAlPlato(completa, piezasDisco);
+    const linea = prefiereMenosMovimiento() ? envolverEnFundido(completa, lienzo) : completa;
+    return { linea, completa, giro, temporales: [disco, interna] };
   }
 
   cerrar(): void {
@@ -84,6 +98,7 @@ class AnimadorEstudio {
     }
     sesion.giro.kill();
     sesion.linea.kill();
+    sesion.completa.kill();
     sesion.temporales.forEach((malla) => liberarMalla(malla, [this.piezas.entorno]));
     this.piezas.solicitarRender();
     emitir('animacion:cerrada', { id: sesion.id });

@@ -105,6 +105,12 @@ class ControlFicha {
       return;
     }
     this.abierta.desconectarCierre();
+    // Suelta el foco ya: si el disco cierra antes de que la ficha termine de irse (movimiento
+    // reducido), al llegar `vinilo:cerrado` el foco tiene que estar "perdido" para volver al lomo
+    const activo = document.activeElement;
+    if (activo instanceof HTMLElement && this.abierta.elemento.contains(activo)) {
+      activo.blur();
+    }
     // Si aún no empezó (está en su retraso), reverse() no dispararía onReverseComplete
     if (this.abierta.entrada.time() === 0) {
       this.quitar();
