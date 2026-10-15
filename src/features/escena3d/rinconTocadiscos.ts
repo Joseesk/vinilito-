@@ -5,7 +5,7 @@ import { crearTocadiscos, type Tocadiscos } from './crearTocadiscos';
 
 /**
  * Mueble bajo contra la pared, debajo de la repisa: en la vista general queda fuera de
- * cuadro y la cámara baja a buscarlo cuando se abre un disco (Y8).
+ * cuadro y la cámara baja a buscarlo cuando se abre un disco.
  */
 const MUEBLE = { ancho: 1.2, alto: 0.6, fondo: 0.45, techoY: -0.55, radioCanto: 0.006 } as const;
 /** Luz cálida tenue, como una lámpara baja: sin ella el tocadiscos quedaría en negro. */
@@ -18,7 +18,6 @@ const REPETICION_VETA = 2;
 
 export interface RinconTocadiscos {
   readonly tocadiscos: Tocadiscos;
-  readonly luz: SpotLight;
 }
 
 function crearMueble(madera: Texture, zPared: number): Mesh {
@@ -51,5 +50,5 @@ export function crearRinconTocadiscos(
   luz.penumbra = LUZ.penumbra;
   luz.target = tocadiscos.grupo;
   escena.add(mueble, tocadiscos.grupo, luz);
-  return { tocadiscos, luz };
+  return { tocadiscos };
 }

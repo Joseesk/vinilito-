@@ -20,7 +20,7 @@ const TIEMPOS = {
   presentacion: { inicio: 0.65, duracion: 0.75 },
   camara: { inicio: 0.3, duracion: 1.1 },
 } as const;
-/** Cuando la funda ya está en la mano mostrando la portada: ahí sigue el disco (Y9). */
+/** Cuando la funda ya está en la mano mostrando la portada: ahí sigue el disco. */
 export const FIN_SACAR_FUNDA = TIEMPOS.presentacion.inicio + TIEMPOS.presentacion.duracion;
 
 export interface PiezasSacarFunda {

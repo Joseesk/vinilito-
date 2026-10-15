@@ -12,7 +12,7 @@ export const MEDIDAS_FUNDA = { lado: 0.314, espesor: 0.026, espesorDoble: 0.034 
 const RUGOSIDAD_CARTON = 0.85;
 
 /** Mismo patrón que `.lomo:nth-child(3n + 2)` de la versión CSS: discos 2, 5, 8 son dobles. */
-export function esDoble(indice: number): boolean {
+function esDoble(indice: number): boolean {
   return indice % 3 === 1;
 }
 

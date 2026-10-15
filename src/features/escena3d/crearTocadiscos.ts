@@ -25,7 +25,7 @@ const BRAZO = {
 } as const;
 const SEGMENTOS = 64;
 
-/** Partes que se animan en Y9: el plato gira y el brazo se mueve hasta el disco. */
+/** Partes que se animan al poner el disco: el plato gira y el brazo va hasta el disco. */
 export interface Tocadiscos {
   readonly grupo: Group;
   /** Centro de la cara superior del fieltro (donde se apoya el disco), en coords del grupo. */

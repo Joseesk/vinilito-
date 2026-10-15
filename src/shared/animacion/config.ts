@@ -8,7 +8,7 @@ export const RETRASO_FICHA = 0.3;
 /** Una vuelta a 33⅓ rpm, como un vinilo real. */
 export const DURACION_VUELTA_DISCO = 1.8;
 
-/** Con 5 lomos la intro completa queda bajo los 2 s del criterio del Sprint 5. */
+/** Con 5 lomos la intro completa queda bajo los 2 s. */
 export const STAGGER_LOMOS = 0.12;
 
 export const EASE_ENTRADA = 'power3.out';
@@ -18,7 +18,7 @@ export const EASE_CAIDA = 'back.out(1.6)';
 /** El giro continuo necesita velocidad constante o se notan tirones en cada vuelta. */
 export const EASE_GIRO = 'none';
 
-export const MEDIA_MOVIMIENTO_REDUCIDO = '(prefers-reduced-motion: reduce)';
+const MEDIA_MOVIMIENTO_REDUCIDO = '(prefers-reduced-motion: reduce)';
 /** Debe coincidir con el `@media (max-width: 767px)` de los CSS de cada feature. */
 export const MEDIA_MOVIL = '(max-width: 767px)';
 

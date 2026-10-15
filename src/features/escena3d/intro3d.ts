@@ -8,8 +8,8 @@ import {
 import type { LucesEstudio } from './crearEstudio';
 import type { FundaEnRepisa } from './ubicarFundas';
 
-/** Una lámpara que se prende: sube, titila una vez y se estabiliza. Fracciones del total. */
-const PARPADEO_SPOT = [0, 0.75, 0.35, 1] as const;
+/** Una lámpara que se prende desde 0: sube, titila una vez y se estabiliza (fracciones). */
+const PARPADEO_SPOT = [0.75, 0.35, 1] as const;
 const DURACION_ENCENDIDO = DURACION_INTRO * 0.7;
 /** Las fundas entran desde adelante hasta su lugar, como al acomodar discos en la repisa. */
 const RECORRIDO_FUNDA = 0.08;
@@ -30,7 +30,7 @@ function encenderLuces(linea: gsap.core.Timeline, { spot, ambiente }: LucesEstud
   linea.to(
     spot,
     {
-      keyframes: { intensity: PARPADEO_SPOT.slice(1).map((fraccion) => fraccion * intensidad) },
+      keyframes: { intensity: PARPADEO_SPOT.map((fraccion) => fraccion * intensidad) },
       duration: DURACION_ENCENDIDO,
       ease: 'none',
     },

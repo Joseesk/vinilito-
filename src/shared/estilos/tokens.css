@@ -19,9 +19,7 @@
   --grosor-borde: 3px;
   --borde: var(--grosor-borde) solid var(--tinta);
   --desfase-sombra: 6px;
-  --desfase-sombra-hover: 9px;
   --sombra: var(--desfase-sombra) var(--desfase-sombra) 0 var(--tinta);
-  --sombra-hover: var(--desfase-sombra-hover) var(--desfase-sombra-hover) 0 var(--tinta);
   --desfase-sombra-chica: 3px;
   --sombra-chica: var(--desfase-sombra-chica) var(--desfase-sombra-chica) 0 var(--tinta);
   --duracion-hover: 0.25s;

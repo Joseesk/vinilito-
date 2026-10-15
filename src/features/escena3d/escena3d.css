@@ -1,6 +1,6 @@
 /*
- * Lienzo 3D a pantalla completa, detrás de todo. Hasta que el 3D esté completo (Y5)
- * la escena CSS lo tapa; `#app[data-escena3d='lista']` indica que ya dibujó.
+ * Lienzo 3D a pantalla completa, detrás de todo. Tras el primer cuadro se marca
+ * `#app[data-escena3d='lista']` y la escena CSS cede su repisa.
  */
 .escena3d {
   position: fixed;
@@ -32,9 +32,5 @@
 
 /* Disco abierto: la cámara se fue de la repisa, los botones no deben recibir clicks */
 .capa3d--bloqueada {
-  pointer-events: none;
-}
-
-.capa3d--bloqueada .capa3d__funda {
   pointer-events: none;
 }

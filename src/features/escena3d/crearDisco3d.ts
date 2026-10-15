@@ -89,6 +89,5 @@ export function crearDisco3d(
     ),
     [canto, cara, cara],
   );
-  disco.name = `disco-${proyecto.id}`;
   return disco;
 }

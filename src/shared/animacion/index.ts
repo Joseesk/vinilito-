@@ -12,7 +12,6 @@ export {
   EASE_VINILO,
   EASE_CAIDA,
   EASE_GIRO,
-  MEDIA_MOVIMIENTO_REDUCIDO,
   MEDIA_MOVIL,
   prefiereMenosMovimiento,
   esMovil,

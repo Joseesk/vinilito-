@@ -8,12 +8,6 @@ import { obtenerVistas, ubicarCamara } from './camara';
 import { construirEstudio } from './crearEstudio';
 import { animarIntro3d } from './intro3d';
 import { crearEscena3d, type Escena3d } from './renderizador';
-import type { FundaEnRepisa } from './ubicarFundas';
-
-export interface EstudioMontado {
-  readonly escena3d: Escena3d;
-  readonly fundas: readonly FundaEnRepisa[];
-}
 
 /**
  * Punto de entrada del chunk dinámico (todo lo que importa `three` cuelga de acá).
@@ -63,10 +57,7 @@ function avisarLista(contenedor: HTMLElement, ubicarBotones: () => void): void {
   });
 }
 
-export function montarEscena3d(
-  contenedor: HTMLElement,
-  calidad: ConfiguracionCalidad,
-): EstudioMontado {
+export function montarEscena3d(contenedor: HTMLElement, calidad: ConfiguracionCalidad): void {
   const escena3d = crearEscena3d(crearFondo(contenedor, calidad), calidad);
   const { fundas, luces, rincon } = construirEstudio(escena3d, calidad);
   // Antes que los botones: al redimensionar, primero se mueve la cámara y después se alinean
@@ -87,5 +78,4 @@ export function montarEscena3d(
   const intro = animarIntro3d({ luces, fundas, solicitarRender: escena3d.solicitarRender });
   // Si se abre un disco durante la intro, se completa ya: las fundas tienen que estar en su lugar
   escuchar('vinilo:abriendo', () => intro.progress(1));
-  return { escena3d, fundas };
 }

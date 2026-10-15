@@ -32,7 +32,6 @@ export interface Escena3d {
   readonly solicitarRender: () => void;
   /** Avisa cada cambio de tamaño del lienzo (después de ajustar cámara y renderer). */
   readonly alRedimensionar: (accion: () => void) => void;
-  readonly destruir: () => void;
 }
 
 function crearRenderer(canvas: HTMLCanvasElement, calidad: ConfiguracionCalidad): WebGLRenderer {
@@ -84,12 +83,8 @@ export function crearEscena3d(lienzo: HTMLCanvasElement, calidad: ConfiguracionC
     solicitarRender();
   });
   observador.observe(lienzo);
-  const destruir = (): void => {
-    observador.disconnect();
-    renderer.dispose();
-  };
   const alRedimensionar = (accion: () => void): void => {
     acciones.push(accion);
   };
-  return { escena, camara, lienzo, entorno, solicitarRender, alRedimensionar, destruir };
+  return { escena, camara, lienzo, entorno, solicitarRender, alRedimensionar };
 }

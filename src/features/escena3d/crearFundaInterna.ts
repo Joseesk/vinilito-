@@ -3,7 +3,7 @@ import { entre, leerToken } from '../../shared/utils';
 import { crearTextura, type Pintor } from './texturas';
 
 /** Metros: apenas más chica que la funda de cartón (31.4 cm) para entrar en ella. */
-export const MEDIDAS_INTERNA = { lado: 0.305, espesor: 0.003 } as const;
+const MEDIDAS_INTERNA = { lado: 0.305, espesor: 0.003 } as const;
 /** Agujero central de la funda interna: deja ver la etiqueta del disco. */
 const RADIO_AGUJERO = 0.17;
 const CANTIDAD_ARRUGAS = 18;
