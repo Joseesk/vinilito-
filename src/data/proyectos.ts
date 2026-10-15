@@ -48,7 +48,8 @@ export const PROYECTOS: readonly Proyecto[] = [
     anio: 2024,
     color: 'disco-4',
     descripcion: 'Catálogo digital de fotografías familiares con línea de tiempo.',
-    portada: '/covers/4.jpg',
+    portada:
+      'https://images.unsplash.com/photo-1559028012-481c04fa702d?w=800&h=500&fit=crop&crop=top&auto=format&q=75',
     captura:
       'https://images.unsplash.com/photo-1559028012-481c04fa702d?w=800&h=500&fit=crop&crop=top&auto=format&q=75',
     enlace: 'https://example.com/archivo-vivo',
@@ -84,9 +85,48 @@ export const PROYECTOS: readonly Proyecto[] = [
     titulo: 'Avanza-gestión',
     anio: 2025,
     color: 'disco-7',
-    descripcion: 'Dancing pi',
+    descripcion: 'Dancing pi 1',
     portada:
       'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=800&h=800&fit=crop&auto=format&q=75',
+    captura:
+      'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&h=500&fit=crop&crop=top&auto=format&q=75',
+    enlace: 'https://www.youtube.com/watch?v=DLzxrzFCyOs',
+  },
+
+  {
+    id: 'id-2',
+    numero: 8,
+    titulo: 'Luzu-tv',
+    anio: 2026,
+    color: 'disco-8',
+    descripcion: 'Dancing pi',
+    portada: '/covers/8.jpg',
+    captura:
+      'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&h=500&fit=crop&crop=top&auto=format&q=75',
+    enlace: 'https://www.youtube.com/watch?v=DLzxrzFCyOs',
+  },
+
+  {
+    id: 'id-3',
+    numero: 9,
+    titulo: 'Luzu-tv',
+    anio: 2026,
+    color: 'disco-9',
+    descripcion: 'Dancing pi',
+    portada: '/covers/9.jpg',
+    captura:
+      'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&h=500&fit=crop&crop=top&auto=format&q=75',
+    enlace: 'https://www.youtube.com/watch?v=DLzxrzFCyOs',
+  },
+
+  {
+    id: 'id-4',
+    numero: 10,
+    titulo: 'Luzu-tv',
+    anio: 2026,
+    color: 'disco-10',
+    descripcion: 'Dancing pi 3',
+    portada: '/covers/10.jpg',
     captura:
       'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&h=500&fit=crop&crop=top&auto=format&q=75',
     enlace: 'https://www.youtube.com/watch?v=DLzxrzFCyOs',

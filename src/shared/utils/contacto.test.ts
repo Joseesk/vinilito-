@@ -10,9 +10,7 @@ describe('crearEnlaceWhatsapp', () => {
 
   it('codifica el mensaje (espacios, tildes, signos)', () => {
     const enlace = crearEnlaceWhatsapp('56911112222', 'Hola José, ¿cotizamos?');
-    expect(enlace).toBe(
-      'https://wa.me/56911112222?text=Hola%20Jos%C3%A9%2C%20%C2%BFcotizamos%3F',
-    );
+    expect(enlace).toBe('https://wa.me/56911112222?text=Hola%20Jos%C3%A9%2C%20%C2%BFcotizamos%3F');
   });
 });
 
