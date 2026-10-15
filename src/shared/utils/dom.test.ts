@@ -1,5 +1,11 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { crearElemento, devolverFocoSiSePerdio, leerToken, obtenerElemento } from './dom';
+import {
+  crearElemento,
+  crearImagen,
+  devolverFocoSiSePerdio,
+  leerToken,
+  obtenerElemento,
+} from './dom';
 
 describe('crearElemento', () => {
   it('crea la etiqueta pedida sin opciones', () => {
@@ -35,6 +41,30 @@ describe('crearElemento', () => {
   it('pone los hijos después del texto', () => {
     const titulo = crearElemento('h2', { texto: 'Año ', hijos: ['2026'] });
     expect(titulo.textContent).toBe('Año 2026');
+  });
+});
+
+describe('crearImagen', () => {
+  it('reserva el tamaño y deja alt vacío por defecto', () => {
+    const imagen = crearImagen('/a.jpg', { clases: ['portada'], ancho: 300, alto: 200 });
+    expect(imagen.getAttribute('src')).toBe('/a.jpg');
+    expect(imagen.getAttribute('alt')).toBe('');
+    expect(imagen.getAttribute('width')).toBe('300');
+    expect(imagen.getAttribute('height')).toBe('200');
+    expect(imagen.hasAttribute('loading')).toBe(false);
+    expect(imagen.classList.contains('portada')).toBe(true);
+  });
+
+  it('carga perezosa solo si se pide', () => {
+    const imagen = crearImagen('/a.jpg', { ancho: 1, alto: 1, perezosa: true });
+    expect(imagen.getAttribute('loading')).toBe('lazy');
+  });
+
+  it('se quita del DOM si falla la carga', () => {
+    const imagen = crearImagen('/a.jpg', { alt: 'Captura', ancho: 1, alto: 1 });
+    const padre = crearElemento('div', { hijos: [imagen] });
+    imagen.dispatchEvent(new Event('error'));
+    expect(padre.children).toHaveLength(0);
   });
 });
 

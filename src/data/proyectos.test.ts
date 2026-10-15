@@ -24,7 +24,14 @@ describe('PROYECTOS', () => {
   });
 
   it('no deja campos de texto vacíos', () => {
-    const textos = PROYECTOS.flatMap((p) => [p.id, p.titulo, p.descripcion, p.portada, p.enlace]);
+    const textos = PROYECTOS.flatMap((p) => [
+      p.id,
+      p.titulo,
+      p.descripcion,
+      p.portada,
+      p.captura,
+      p.enlace,
+    ]);
     expect(textos.every((texto) => texto.trim().length > 0)).toBe(true);
   });
 });

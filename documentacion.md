@@ -307,7 +307,7 @@ El orden importa: primero lo que se ve en el primer paint, al final el 3D.
 
 | Tipo                                                        | Archivo       | Descripción                                                                                                                                           |
 | ----------------------------------------------------------- | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Proyecto`                                                  | `proyecto.ts` | `id, numero, titulo, anio, color, descripcion, portada, enlace` (todo `readonly`)                                                                     |
+| `Proyecto`                                                  | `proyecto.ts` | `id, numero, titulo, anio, color, descripcion, portada, captura, enlace` (todo `readonly`)                                                            |
 | `ColorLomo`                                                 | `proyecto.ts` | Unión `'disco-1' \| … \| 'disco-10'`: nombres de token, nunca hex                                                                                     |
 | `Perfil`, `EnlacePerfil`                                    | `perfil.ts`   | Nombre, rol, email, lista de enlaces                                                                                                                  |
 | `EventosApp`                                                | `eventos.ts`  | Mapa nombre de evento → payload (`undefined` = sin payload)                                                                                           |
@@ -332,6 +332,9 @@ Ver [§4.3](#43-bus-de-eventos). El registro interno es un objeto `{ [nombre]: S
 | `debeCargar3d`           | `dispositivo.ts` | `(senales) => boolean`                                                               | `false` con "ahorro de datos" o red 2G                                                                                                                                                                                                                                                        |
 | `esRedLenta`             | `dispositivo.ts` | `(senales) => boolean`                                                               | Usada por `clasificarCalidad` (exportada para test)                                                                                                                                                                                                                                           |
 | `combinarDesconexiones`  | `funciones.ts`   | `(fns[]) => () => void`                                                              | Junta varias funciones de limpieza (las que devuelve `escuchar`) en una                                                                                                                                                                                                                       |
+| `crearImagen`            | `dom.ts`         | `(src, { clases, alt, ancho, alto, perezosa }) => HTMLImageElement`                  | `<img>` con `width`/`height` (reserva espacio: sin saltos de layout) que **se quita sola si falla** (sin ícono de imagen rota). La usan la funda/etiqueta CSS y la captura de la ficha                                                                                                        |
+| `precargarImagen`        | `dom.ts`         | `(src) => void`                                                                      | Crea un `<img>` sin insertarlo: el navegador la descarga y queda en caché para cuando se muestre                                                                                                                                                                                              |
+| `obtenerDominio`         | `url.ts`         | `(url) => string`                                                                    | `https://www.ejemplo.com/a` → `ejemplo.com`. Vacío si la URL no es válida. Usa `try/catch` y no `URL.canParse` (no existe en Safari < 17)                                                                                                                                                     |
 
 Todas son **puras o casi puras** y tienen tests (`*.test.ts` al lado).
 
@@ -360,13 +363,116 @@ Todas son **puras o casi puras** y tienen tests (`*.test.ts` al lado).
 
 ### 5.4 `src/data`
 
-| Archivo             | Contenido                                                                                                                 |
-| ------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| `proyectos.ts`      | `PROYECTOS: readonly Proyecto[]` (hoy 5 de ejemplo) y `MAXIMO_PROYECTOS = 10`                                             |
-| `perfil.ts`         | `PERFIL: Perfil` (de ejemplo)                                                                                             |
-| `proyectos.test.ts` | Valida: entre 1 y 10 proyectos, ids únicos, números de 1 a N sin huecos, un color distinto por proyecto, textos no vacíos |
+`data/` es el **contenido** del portafolio: qué proyectos hay y quién es el autor. **No tiene lógica ni funciones**: solo constantes tipadas. Para cambiar lo que muestra la página (agregar un disco, cambiar un texto, el email) se edita **solo** esta carpeta; ninguna feature tiene textos de contenido escritos a mano.
 
-La repisa, la paleta (`--disco-1` … `--disco-10`) y el layout móvil están pensados para **hasta 10** proyectos.
+| Archivo             | Exporta                                                   | Contenido                                                                                                                 |
+| ------------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `proyectos.ts`      | `PROYECTOS: readonly Proyecto[]`, `MAXIMO_PROYECTOS = 10` | La lista de discos de la repisa (hoy 7)                                                                                   |
+| `perfil.ts`         | `PERFIL: Perfil`                                          | Nombre, rol, email y enlaces del cartel                                                                                   |
+| `proyectos.test.ts` | —                                                         | Valida: entre 1 y 10 proyectos, ids únicos, números de 1 a N sin huecos, un color distinto por proyecto, textos no vacíos |
+
+#### Por qué los datos están separados
+
+- **Una sola fuente de verdad.** La versión CSS, el estudio 3D, el vinilo y la ficha leen la **misma** lista. Agregar un proyecto lo hace aparecer en la repisa CSS, en la repisa 3D, en los botones accesibles y en la ficha, sin tocar código de features.
+- **Los tipos viven en `shared/types/`, los datos en `data/`.** `shared/` no puede importar `data/` (regla de dependencias), pero `data/` sí importa los tipos de `shared/`. Así las features conocen la _forma_ (`Proyecto`) sin depender del _contenido_.
+- **Todo es de solo lectura.** Las interfaces marcan cada campo `readonly` y la lista es `readonly Proyecto[]`: TypeScript no compila un `PROYECTOS.push(...)` ni un `proyecto.titulo = ...` en ninguna feature. El contenido no cambia en tiempo de ejecución.
+- **Sin `as const`, con anotación de tipo.** `PROYECTOS` se anota como `readonly Proyecto[]` en vez de inferirse: si falta un campo o un color no existe (`'disco-11'`), el error aparece **en el dato**, no en la feature que lo usa.
+
+#### `proyectos.ts`
+
+```ts
+import type { Proyecto } from '../shared/types/proyecto';
+
+export const MAXIMO_PROYECTOS = 10;
+
+export const PROYECTOS: readonly Proyecto[] = [
+  {
+    id: 'mapa-sonoro',
+    numero: 1,
+    titulo: 'Mapa sonoro',
+    anio: 2026,
+    color: 'disco-1',
+    descripcion: 'Mapa interactivo que reproduce sonidos grabados en distintos barrios.',
+    portada: '/covers/1.jpg',
+    enlace: 'https://example.com/mapa-sonoro',
+  },
+  // …
+];
+```
+
+- `import type`: solo se importa el tipo, que desaparece al compilar (lo exige `verbatimModuleSyntax`).
+- `MAXIMO_PROYECTOS` no es un número mágico: es el límite real del diseño. La paleta tiene 10 colores (`--disco-1` … `--disco-10`), la unión `ColorLomo` tiene 10 valores y la repisa 3D y el layout móvil están medidos para 10 fundas. El test lo usa para validar la cantidad.
+
+**Cada campo y dónde se usa:**
+
+| Campo         | Tipo        | Para qué sirve                                                                                         | Dónde se usa                                                                                                                                                                                                |
+| ------------- | ----------- | ------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`          | `string`    | Identificador interno. Viaja en **todos** los eventos (`proyecto:seleccionado`, `vinilo:abriendo`…)    | `data-id` de lomos y botones 3D, `ControlVinilo` (valida que exista), animadores y ficha lo buscan con `PROYECTOS.find(...)`, `name` de la malla 3D                                                         |
+| `numero`      | `number`    | Número visible del disco (1…N) y **semilla** del azar                                                  | Lomo CSS, funda CSS, ficha, `aria-label` ("3. Huerta urbana"), etiqueta del disco 3D. En 3D `numero × 7/13/31` es la semilla de las texturas: cada disco sale distinto pero **siempre igual** entre visitas |
+| `titulo`      | `string`    | Nombre del proyecto                                                                                    | Lomo, funda, `h2` de la ficha, `aria-label`, textura del lomo y de la etiqueta 3D (en mayúsculas)                                                                                                           |
+| `anio`        | `number`    | Año (sin `ñ` en el identificador, por la regla de nombres)                                             | Cabecera de la ficha                                                                                                                                                                                        |
+| `color`       | `ColorLomo` | **Nombre** de un token, nunca un hex                                                                   | CSS: `style="--color-lomo: var(--disco-3)"`. 3D: `leerToken('--disco-3')` lee el hex de `tokens.css`. Así el color se cambia en **un solo lugar**                                                           |
+| `descripcion` | `string`    | Texto corto                                                                                            | Cuerpo de la ficha                                                                                                                                                                                          |
+| `portada`     | `string`    | Arte **cuadrado** de la funda: ruta en `public/` (`/covers/N.jpg`) o URL externa (en 3D necesita CORS) | Funda CSS (`<img>` que se quita si falla) y 3D (`aplicarPortada`, se pide **solo al abrir**). Si no existe, queda la portada pintada por código                                                             |
+| `captura`     | `string`    | Pantallazo **horizontal** de la web (cualquier URL; ideal 16:10)                                       | Ficha: ventana de navegador en escritorio, miniatura en móvil. En 3D se precarga en `vinilo:abriendo`                                                                                                       |
+| `enlace`      | `string`    | URL externa del proyecto                                                                               | Botón "Ver proyecto →" de la ficha, con `target="_blank"` y `rel="noopener noreferrer"`                                                                                                                     |
+
+```mermaid
+graph LR
+  P[(PROYECTOS)] --> L[escena<br/>lomos CSS]
+  P --> V[vinilo<br/>ControlVinilo + AnimadorCss]
+  P --> F[ficha<br/>ControlFicha]
+  P --> E[escena3d<br/>crearEstudio, capaAccesible,<br/>AnimadorEstudio]
+  T[tokens.css<br/>--disco-N] -. color por nombre .-> L
+  T -. leerToken .-> E
+```
+
+#### `perfil.ts`
+
+```ts
+export const PERFIL: Perfil = {
+  nombre: 'Nombre Apellido',
+  rol: 'Diseño y desarrollo web',
+  email: 'hola@example.com',
+  enlaces: [
+    { etiqueta: 'GitHub', url: 'https://github.com/' },
+    { etiqueta: 'LinkedIn', url: 'https://www.linkedin.com/' },
+  ],
+};
+```
+
+Lo consume **solo** `features/escena` (`construirEscena` → `crearCartel`):
+
+| Campo     | Se muestra como                                                                 |
+| --------- | ------------------------------------------------------------------------------- |
+| `nombre`  | El **único `h1`** de la página                                                  |
+| `rol`     | Subtítulo del cartel                                                            |
+| `email`   | Enlace `mailto:` dentro de `<address>`                                          |
+| `enlaces` | Un enlace por elemento (`etiqueta` = texto, `url` = destino), en el mismo orden |
+
+`enlaces` es `readonly EnlacePerfil[]`: se pueden agregar o quitar redes sin tocar código. En modo 3D el cartel sigue visible (como papel con cinta), así que estos datos se ven en las dos versiones.
+
+#### `proyectos.test.ts`
+
+Los datos los escribe una persona a mano, así que se validan como cualquier otra entrada. TypeScript ya garantiza la **forma** (campos y tipos); el test cubre las reglas que el tipo no puede expresar:
+
+| Test                                      | Cómo lo comprueba                                                                     | Qué rompería si falla                                                                                     |
+| ----------------------------------------- | ------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| Entre 1 y `MAXIMO_PROYECTOS` proyectos    | `length >= 1` y `<= MAXIMO_PROYECTOS`                                                 | Con 0, repisa vacía. Con más de 10, no hay color ni lugar en la repisa                                    |
+| `id` únicos                               | Un `Set` de ids debe tener el mismo tamaño que la lista                               | `PROYECTOS.find(id)` devolvería siempre el primero: se abriría otro disco y la ficha mostraría otro texto |
+| `numero` de 1 a N sin huecos ni repetidos | Ordena los números y los compara con `[1, 2, …, N]`                                   | Numeración visible incoherente y semillas de textura repetidas                                            |
+| Un `color` distinto por proyecto          | Un `Set` de colores con el mismo tamaño que la lista                                  | Dos discos iguales en la repisa                                                                           |
+| Sin textos vacíos                         | `id`, `titulo`, `descripcion`, `portada`, `captura`, `enlace` con `trim().length > 0` | Lomos sin título, ficha vacía, enlace roto                                                                |
+
+`perfil.ts` no tiene test: es un único objeto y su forma ya la garantiza el tipo `Perfil`.
+
+#### Convenciones al editar los datos
+
+- **`id` en _kebab-case_**, en minúsculas y sin espacios ni tildes (`'huerta-urbana'`). Hoy no se usa en selectores CSS, pero viaja en eventos y atributos `data-id`; un formato estable evita sorpresas si mañana se usa en una URL o un selector.
+- **`numero` consecutivo** y **`color` = `disco-<numero>`**: así el test pasa y cada disco toma el color de su posición.
+- **`portada`** apunta a `public/covers/<numero>.jpg`. Es opcional en la práctica: si el archivo no existe, se ve la portada generada por código.
+- **Textos sin espacios al final** (`trim`): un espacio sobrante se nota en el lomo y en el `aria-label`.
+- La repisa, la paleta (`--disco-1` … `--disco-10`) y el layout móvil están pensados para **hasta 10** proyectos. Para pasar de 10 habría que sumar tokens de color, ampliar `ColorLomo` y subir `MAXIMO_PROYECTOS`.
 
 ### 5.5 `features/escena` — versión CSS (placeholder y respaldo)
 
@@ -398,18 +504,40 @@ Es lo primero que se ve. Cuando el 3D está listo queda **solo el cartel** (el n
 
 ### 5.7 `features/ficha` — panel de información
 
-| Archivo           | Funciones                                          | Qué hace                                                                                                                                                                                                                                                                |
-| ----------------- | -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `index.ts`        | `iniciarFicha(contenedor)`                         | Conecta el control de la ficha                                                                                                                                                                                                                                          |
-| `controlFicha.ts` | `conectarFicha(contenedor)` + clase `ControlFicha` | Dos **modos**: `css` (entra en `vinilo:abriendo` con 0.3 s de retraso) y `3d` (entra en `vinilo:abierto`, cuando el disco ya gira; pasa a este modo con `escena3d:lista`). En 3D agrega `.ficha--impresa` y botones de texto. `mostrar`, `enfocar`, `ocultar`, `quitar` |
-| `crearFicha.ts`   | `crearFicha(proyecto)`                             | `<aside aria-labelledby>` con `tabindex="-1"` (enfocable por código, no por Tab), cabecera (número, año, ×) y cuerpo (título `h2`, descripción, enlace "Ver proyecto →")                                                                                                |
-| `cerrarFicha.ts`  | `conectarCierre(ficha)`                            | × , `Esc` y click fuera emiten `vinilo:cerrar`. Un click en cualquier disparador `[aria-expanded]` **no** cuenta como "fuera". Devuelve la función que quita los listeners                                                                                              |
-| `ficha.css`       | —                                                  | Versión neobrutal y versión **"liner notes"** (papel, franja del color del disco, año en versalitas)                                                                                                                                                                    |
+| Archivo           | Funciones                                          | Qué hace                                                                                                                                                                                                                                                                                                                                         |
+| ----------------- | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `index.ts`        | `iniciarFicha(contenedor)`                         | Conecta el control de la ficha                                                                                                                                                                                                                                                                                                                   |
+| `controlFicha.ts` | `conectarFicha(contenedor)` + clase `ControlFicha` | Dos **modos**: `css` (entra en `vinilo:abriendo` con 0.3 s de retraso) y `3d` (entra en `vinilo:abierto`, cuando el disco ya gira; pasa a este modo con `escena3d:lista`). En 3D agrega `.ficha--impresa` y botones de texto. `mostrar`, `enfocar`, `ocultar`, `quitar`                                                                          |
+| `crearFicha.ts`   | `crearFicha(proyecto)`                             | `<aside aria-labelledby>` con `tabindex="-1"` (enfocable por código, no por Tab), cabecera (número, año, ×) y cuerpo (captura, título `h2`, descripción, enlace "Ver proyecto →"). `crearCaptura` arma un `<figure>` con barra de navegador decorativa (`aria-hidden`: puntos + dominio de `enlace`) y la imagen con `alt="Captura de <título>"` |
+| `cerrarFicha.ts`  | `conectarCierre(ficha)`                            | × , `Esc` y click fuera emiten `vinilo:cerrar`. Un click en cualquier disparador `[aria-expanded]` **no** cuenta como "fuera". Devuelve la función que quita los listeners                                                                                                                                                                       |
+| `ficha.css`       | —                                                  | Versión neobrutal y versión **"liner notes"** (papel, franja del color del disco, año en versalitas)                                                                                                                                                                                                                                             |
 
 Detalles finos:
 
 - La ficha se hace **visible de forma sincrónica** (`gsap.set(visibility)`) y solo se anima la opacidad: si estuviera `hidden` al llamar `focus()`, el navegador no la enfocaría.
 - Al empezar a ocultarse **suelta el foco** (`blur`): así, al llegar `vinilo:cerrado`, el foco está "perdido" y vuelve al lomo aunque la ficha todavía se esté desvaneciendo.
+
+**Captura de la web en la ficha:**
+
+```
+Escritorio                        Móvil
+┌──────────────────────────┐      ┌──────────────────────────────┐
+│ 7  2025               ×  │      │ 7  2025                   ×  │
+├──────────────────────────┤      ├──────────────────────────────┤
+│ ┌──────────────────────┐ │      │ ┌──────┐ AVANZA-GESTIÓN      │
+│ │ ● ● ●  youtube.com   │ │      │ │ img  │ Dancing pi          │
+│ ├──────────────────────┤ │      │ └──────┘ Ver proyecto →      │
+│ │   captura 16:10      │ │      └──────────────────────────────┘
+│ └──────────────────────┘ │
+│ AVANZA-GESTIÓN …         │
+└──────────────────────────┘
+```
+
+- **Escritorio:** ventana de navegador a todo el ancho. **Móvil:** miniatura de 6 rem al lado del título y sin barra, para que la ficha (abajo) no crezca y tape el tocadiscos.
+- **Cualquier tamaño de imagen:** `aspect-ratio: 16 / 10` + `object-fit: cover` + `object-position: top` (se ve la cabecera de la web). Con `width`/`height` en el `<img>` el alto se reserva antes de cargar.
+- **Si la imagen falla** se quita el `<img>` y el marco se oculta con `:not(:has(.ficha__imagen))`; en móvil, el grid vuelve a una columna por `:has()`. Sin JavaScript extra.
+- **Precarga en 3D:** la ficha aparece al terminar la apertura (~3.3 s), así que en `vinilo:abriendo` se llama a `precargarImagen(captura)` y la imagen llega antes que la ficha.
+- **Sin CORS:** a diferencia de la portada 3D, la captura es un `<img>` normal; sirve cualquier URL.
 
 ### 5.8 `features/escena3d` — estudio en Three.js
 

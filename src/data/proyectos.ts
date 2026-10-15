@@ -13,6 +13,8 @@ export const PROYECTOS: readonly Proyecto[] = [
     color: 'disco-1',
     descripcion: 'Mapa interactivo que reproduce sonidos grabados en distintos barrios.',
     portada: '/covers/1.jpg',
+    captura:
+      'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=500&fit=crop&crop=top&auto=format&q=75',
     enlace: 'https://example.com/mapa-sonoro',
   },
   {
@@ -23,6 +25,8 @@ export const PROYECTOS: readonly Proyecto[] = [
     color: 'disco-2',
     descripcion: 'Herramienta para componer afiches tipográficos con animación.',
     portada: '/covers/2.jpg',
+    captura:
+      'https://images.unsplash.com/photo-1547658719-da2b51169166?w=800&h=500&fit=crop&crop=top&auto=format&q=75',
     enlace: 'https://example.com/tipos-moviles',
   },
   {
@@ -33,6 +37,8 @@ export const PROYECTOS: readonly Proyecto[] = [
     color: 'disco-3',
     descripcion: 'App para organizar turnos de riego en huertas comunitarias.',
     portada: '/covers/3.jpg',
+    captura:
+      'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=500&fit=crop&crop=top&auto=format&q=75',
     enlace: 'https://example.com/huerta-urbana',
   },
   {
@@ -43,6 +49,8 @@ export const PROYECTOS: readonly Proyecto[] = [
     color: 'disco-4',
     descripcion: 'Catálogo digital de fotografías familiares con línea de tiempo.',
     portada: '/covers/4.jpg',
+    captura:
+      'https://images.unsplash.com/photo-1559028012-481c04fa702d?w=800&h=500&fit=crop&crop=top&auto=format&q=75',
     enlace: 'https://example.com/archivo-vivo',
   },
   {
@@ -53,6 +61,34 @@ export const PROYECTOS: readonly Proyecto[] = [
     color: 'disco-5',
     descripcion: 'Blog minimalista para publicar bocetos y notas de proceso.',
     portada: '/covers/5.jpg',
+    captura:
+      'https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?w=800&h=500&fit=crop&crop=top&auto=format&q=75',
     enlace: 'https://example.com/cuaderno-abierto',
+  },
+  {
+    id: 'la-macarena',
+    numero: 6,
+    titulo: 'Dale a tu cuerpo alegría macarena ',
+    anio: 1993,
+    color: 'disco-6',
+    descripcion: 'Canción bailable.',
+    portada: '/covers/6.jpg',
+    captura:
+      'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=500&fit=crop&crop=top&auto=format&q=75',
+    enlace: 'https://www.youtube.com/watch?v=DLzxrzFCyOs',
+  },
+
+  {
+    id: 'la-la',
+    numero: 7,
+    titulo: 'Avanza-gestión',
+    anio: 2025,
+    color: 'disco-7',
+    descripcion: 'Dancing pi',
+    portada:
+      'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=800&h=800&fit=crop&auto=format&q=75',
+    captura:
+      'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&h=500&fit=crop&crop=top&auto=format&q=75',
+    enlace: 'https://www.youtube.com/watch?v=DLzxrzFCyOs',
   },
 ];

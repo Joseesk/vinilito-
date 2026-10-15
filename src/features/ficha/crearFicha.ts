@@ -1,7 +1,9 @@
 import type { Proyecto } from '../../shared/types/proyecto';
-import { crearElemento } from '../../shared/utils';
+import { crearElemento, crearImagen, obtenerDominio } from '../../shared/utils';
 
 const ID_TITULO = 'ficha-titulo';
+/** Tamaño intrínseco 16:10, igual que el `aspect-ratio` del CSS: reserva el alto antes de cargar. */
+const CAPTURA_PX = { ancho: 800, alto: 500 } as const;
 
 function crearCabecera(proyecto: Proyecto): HTMLDivElement {
   return crearElemento('div', {
@@ -18,10 +20,32 @@ function crearCabecera(proyecto: Proyecto): HTMLDivElement {
   });
 }
 
+/**
+ * Captura dentro de una ventana de navegador (barra con puntos y dominio) para que se lea como
+ * "página web". La barra es decorativa: el dominio ya lo anuncia el enlace del proyecto.
+ */
+function crearCaptura(proyecto: Proyecto): HTMLElement {
+  const barra = crearElemento('div', {
+    clases: ['ficha__barra'],
+    atributos: { 'aria-hidden': 'true' },
+    hijos: [
+      crearElemento('span', { clases: ['ficha__puntos'] }),
+      crearElemento('span', { clases: ['ficha__dominio'], texto: obtenerDominio(proyecto.enlace) }),
+    ],
+  });
+  const imagen = crearImagen(proyecto.captura, {
+    clases: ['ficha__imagen'],
+    alt: `Captura de ${proyecto.titulo}`,
+    ...CAPTURA_PX,
+  });
+  return crearElemento('figure', { clases: ['ficha__captura'], hijos: [barra, imagen] });
+}
+
 function crearCuerpo(proyecto: Proyecto): HTMLDivElement {
   return crearElemento('div', {
     clases: ['ficha__cuerpo'],
     hijos: [
+      crearCaptura(proyecto),
       crearElemento('h2', {
         clases: ['ficha__titulo'],
         texto: proyecto.titulo,

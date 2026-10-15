@@ -18,6 +18,9 @@ export interface Proyecto {
   readonly anio: number;
   readonly color: ColorLomo;
   readonly descripcion: string;
+  /** Arte cuadrado de la funda. */
   readonly portada: string;
+  /** Pantallazo de la web (horizontal) para la ficha: referencia visual del proyecto. */
+  readonly captura: string;
   readonly enlace: string;
 }

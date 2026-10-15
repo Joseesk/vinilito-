@@ -58,6 +58,57 @@
   padding: var(--espacio-l);
 }
 
+/* Captura en una ventana de navegador: se lee como "página web" de un vistazo */
+.ficha__captura {
+  /* Sin esto el dominio largo (nowrap) ensancha la columna del grid */
+  min-width: 0;
+  margin: 0;
+  border: var(--borde);
+}
+
+/* Si la imagen falló, crearImagen() la quita: no queda un marco vacío */
+.ficha__captura:not(:has(.ficha__imagen)) {
+  display: none;
+}
+
+.ficha__barra {
+  display: flex;
+  align-items: center;
+  padding: var(--espacio-xs) var(--espacio-s);
+  border-bottom: var(--borde);
+  font-size: 0.75rem;
+}
+
+/* Tres puntos con un solo elemento: el mismo círculo repetido con sombras */
+.ficha__puntos {
+  flex: none;
+  width: 0.5rem;
+  height: 0.5rem;
+  margin-right: 2.5rem;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow:
+    0.75rem 0 currentColor,
+    1.5rem 0 currentColor;
+}
+
+.ficha__dominio {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  opacity: 0.7;
+}
+
+/* Cualquier tamaño de imagen: se recorta sin deformarse; arriba está la cabecera de la web */
+.ficha__imagen {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  object-position: top;
+}
+
 .ficha__titulo {
   font-size: clamp(1.5rem, 2.5vw, 2rem);
   text-transform: uppercase;
@@ -119,6 +170,12 @@
   background: none;
 }
 
+.ficha--impresa .ficha__captura,
+.ficha--impresa .ficha__barra {
+  border-color: var(--placa-linea);
+  border-width: 1px;
+}
+
 /* El panel recibe foco por código solo para anunciarse; no es interactivo */
 .ficha:focus {
   outline: none;
@@ -143,5 +200,24 @@
   .ficha__cuerpo {
     gap: var(--espacio-s);
     padding: var(--espacio-m);
+  }
+
+  /* Miniatura al lado del título y sin barra: la ficha no debe crecer y tapar el tocadiscos */
+  .ficha__cuerpo:has(.ficha__imagen) {
+    grid-template-columns: 6rem 1fr;
+    column-gap: var(--espacio-m);
+  }
+
+  .ficha__cuerpo:has(.ficha__imagen) > :not(.ficha__captura) {
+    grid-column: 2;
+  }
+
+  .ficha__captura {
+    grid-row: span 2;
+    align-self: start;
+  }
+
+  .ficha__barra {
+    display: none;
   }
 }

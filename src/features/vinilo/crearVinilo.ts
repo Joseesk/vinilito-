@@ -1,17 +1,16 @@
 import type { Proyecto } from '../../shared/types/proyecto';
-import { crearElemento } from '../../shared/utils';
+import { crearElemento, crearImagen } from '../../shared/utils';
 
 /** Tamaño intrínseco fijo de la portada: reserva espacio y evita saltos de layout. */
-const LADO_PORTADA_PX = '300';
+const LADO_PORTADA_PX = 300;
 
 function crearPortada(src: string, clase: string): HTMLImageElement {
-  const portada = crearElemento('img', {
+  return crearImagen(src, {
     clases: [clase],
-    atributos: { src, alt: '', loading: 'lazy', width: LADO_PORTADA_PX, height: LADO_PORTADA_PX },
+    ancho: LADO_PORTADA_PX,
+    alto: LADO_PORTADA_PX,
+    perezosa: true,
   });
-  // Sin esto Chrome dibuja el ícono de imagen rota encima del número
-  portada.addEventListener('error', () => portada.remove(), { once: true });
-  return portada;
 }
 
 function crearEtiqueta(proyecto: Proyecto): HTMLDivElement {

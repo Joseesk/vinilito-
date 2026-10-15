@@ -8,11 +8,16 @@ import {
   prefiereMenosMovimiento,
 } from '../../shared/animacion';
 import { escuchar } from '../../shared/eventos';
-import { combinarDesconexiones } from '../../shared/utils';
+import type { Proyecto } from '../../shared/types/proyecto';
+import { combinarDesconexiones, precargarImagen } from '../../shared/utils';
 import { conectarCierre } from './cerrarFicha';
 import { crearFicha } from './crearFicha';
 
 const ENTRADA_FICHA_PORCENTAJE = 12;
+
+function buscarProyecto(id: string): Proyecto | undefined {
+  return PROYECTOS.find((candidato) => candidato.id === id);
+}
 
 /** Escritorio: entra desde la derecha. Móvil: desde abajo, donde está la ficha. */
 function obtenerDesplazamientoInicial(): gsap.TweenVars {
@@ -53,6 +58,12 @@ class ControlFicha {
   alAbrirse(id: string): void {
     if (this.modo === 'css') {
       this.mostrar(id, RETRASO_FICHA);
+      return;
+    }
+    // En 3D la ficha recién aparece al terminar la apertura (~3 s): la captura se pide ya
+    const proyecto = buscarProyecto(id);
+    if (proyecto) {
+      precargarImagen(proyecto.captura);
     }
   }
 
@@ -65,7 +76,7 @@ class ControlFicha {
 
   private mostrar(id: string, retraso: number): void {
     this.quitar();
-    const proyecto = PROYECTOS.find((candidato) => candidato.id === id);
+    const proyecto = buscarProyecto(id);
     if (!proyecto) {
       return;
     }

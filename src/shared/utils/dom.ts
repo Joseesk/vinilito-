@@ -23,6 +23,40 @@ export function crearElemento<K extends keyof HTMLElementTagNameMap>(
   return elemento;
 }
 
+export interface OpcionesImagen {
+  readonly clases?: readonly string[];
+  /** Vacío por defecto: solo las imágenes decorativas lo dejan así. */
+  readonly alt?: string;
+  readonly ancho: number;
+  readonly alto: number;
+  readonly perezosa?: boolean;
+}
+
+/**
+ * `<img>` con tamaño intrínseco (reserva espacio, sin saltos de layout) que se quita sola si
+ * falla: sin esto el navegador dibuja el ícono de imagen rota.
+ */
+export function crearImagen(src: string, opciones: OpcionesImagen): HTMLImageElement {
+  const { clases, alt = '', ancho, alto, perezosa = false } = opciones;
+  const imagen = crearElemento('img', {
+    clases,
+    atributos: {
+      src,
+      alt,
+      width: String(ancho),
+      height: String(alto),
+      ...(perezosa ? { loading: 'lazy' } : {}),
+    },
+  });
+  imagen.addEventListener('error', () => imagen.remove(), { once: true });
+  return imagen;
+}
+
+/** Pide la imagen sin mostrarla: queda en la caché del navegador para cuando se use. */
+export function precargarImagen(src: string): void {
+  crearElemento('img', { atributos: { src } });
+}
+
 /** Lanza error si no existe: un nodo faltante es un bug de maquetado, no un caso a tolerar. */
 export function obtenerElemento<T extends Element = HTMLElement>(
   selector: string,
