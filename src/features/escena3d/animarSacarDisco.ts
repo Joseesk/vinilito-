@@ -11,7 +11,7 @@ const SALIDA = { subida: 0.08, adelante: 0.2 } as const;
  * Donde queda "en la mano": centro inferior de la portada (tras el giro el pivote queda ahí),
  * delante de la repisa y por encima del tocadiscos.
  */
-const PRESENTACION = { x: -0.13, y: -0.27, z: 0.32 } as const;
+export const PRESENTACION = { x: -0.13, y: -0.27, z: 0.32 } as const;
 /** Gira para mostrar la portada (cara +x) a la cámara. */
 const GIRO_PORTADA = -Math.PI / 2;
 const TIEMPOS = {
@@ -20,6 +20,8 @@ const TIEMPOS = {
   presentacion: { inicio: 0.65, duracion: 0.75 },
   camara: { inicio: 0.3, duracion: 1.1 },
 } as const;
+/** Cuando la funda ya está en la mano mostrando la portada: ahí sigue el disco (Y9). */
+export const FIN_SACAR_FUNDA = TIEMPOS.presentacion.inicio + TIEMPOS.presentacion.duracion;
 
 export interface PiezasSacarFunda {
   readonly funda: FundaEnRepisa;

@@ -9,7 +9,11 @@ import { crearTocadiscos, type Tocadiscos } from './crearTocadiscos';
  */
 const MUEBLE = { ancho: 1.2, alto: 0.6, fondo: 0.45, techoY: -0.55, radioCanto: 0.006 } as const;
 /** Luz cálida tenue, como una lámpara baja: sin ella el tocadiscos quedaría en negro. */
-const LUZ = { x: -0.25, y: 0.1, z: 0.55, intensidad: 5, angulo: 0.5, penumbra: 0.8 } as const;
+/**
+ * Alta y lejos del recorrido del disco: más cerca, su brillo especular volvía crema el vinilo
+ * mientras viaja inclinado hacia el plato.
+ */
+const LUZ = { x: -0.35, y: 0.45, z: 0.85, intensidad: 4, angulo: 0.35, penumbra: 0.8 } as const;
 const REPETICION_VETA = 2;
 
 export interface RinconTocadiscos {

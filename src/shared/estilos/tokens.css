@@ -35,6 +35,9 @@
   --metal-oscuro: #2b2b2b;
   --metal-plateado: #c9c9c9;
   --fieltro: #1c1c1c;
+  /* Funda interna de papel (la que envuelve al disco dentro del cartón) */
+  --papel-interno: #ece8de;
+  --papel-arruga: rgba(0, 0, 0, 0.06);
   /* Surcos del vinilo 3D: anillos apenas más claros y más oscuros que la base */
   --surco-claro: #262626;
   --surco-oscuro: #050505;

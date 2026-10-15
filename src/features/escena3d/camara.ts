@@ -24,6 +24,16 @@ export const VISTA_FUNDA: Vista = {
   mira: { x: -0.04, y: -0.2, z: 0.2 },
 };
 
+/**
+ * Desde adelante y arriba del tocadiscos: el plato girando y el brazo apoyado. Mira algo a
+ * la derecha del plato para que el tocadiscos quede a la izquierda de la ficha (que va a la
+ * derecha y lo tapaba).
+ */
+export const VISTA_TOCADISCOS: Vista = {
+  posicion: { x: 0.2, y: -0.12, z: 0.74 },
+  mira: { x: 0.13, y: -0.42, z: 0.06 },
+};
+
 export function ubicarCamara(camara: PerspectiveCamera, { posicion, mira }: Vista): void {
   camara.position.set(posicion.x, posicion.y, posicion.z);
   camara.lookAt(mira.x, mira.y, mira.z);

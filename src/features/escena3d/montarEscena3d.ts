@@ -18,10 +18,7 @@ export interface EstudioMontado {
  * Lienzo y viñeta van al principio (fondo). Los botones accesibles van al final: así el
  * orden de Tab es cartel → discos → ficha. El vinilo y la ficha quedan encima por `z-index`.
  */
-export function montarEscena3d(
-  contenedor: HTMLElement,
-  calidad: ConfiguracionCalidad,
-): EstudioMontado {
+function crearFondo(contenedor: HTMLElement, calidad: ConfiguracionCalidad): HTMLCanvasElement {
   const lienzo = crearElemento('canvas', {
     clases: ['escena3d'],
     atributos: { 'aria-hidden': 'true', 'data-calidad': calidad.nivel },
@@ -31,19 +28,36 @@ export function montarEscena3d(
     atributos: { 'aria-hidden': 'true' },
   });
   contenedor.prepend(lienzo, vineta);
-  const escena3d = crearEscena3d(lienzo, calidad);
-  const { fundas, luces } = construirEstudio(escena3d, calidad);
+  return lienzo;
+}
+
+/** Tras el primer cuadro: alinea los botones y avisa que la escena CSS puede ceder. */
+function avisarLista(contenedor: HTMLElement, ubicarBotones: () => void): void {
+  requestAnimationFrame(() => {
+    ubicarBotones();
+    contenedor.dataset['escena3d'] = 'lista';
+    emitir('escena3d:lista');
+  });
+}
+
+export function montarEscena3d(
+  contenedor: HTMLElement,
+  calidad: ConfiguracionCalidad,
+): EstudioMontado {
+  const escena3d = crearEscena3d(crearFondo(contenedor, calidad), calidad);
+  const { fundas, luces, rincon } = construirEstudio(escena3d, calidad);
   const capa = crearCapaAccesible({ ...escena3d, fundas });
-  conectarAnimadorEstudio({ ...escena3d, fundas });
+  conectarAnimadorEstudio({
+    ...escena3d,
+    fundas,
+    tocadiscos: rincon.tocadiscos,
+    ladoTextura: calidad.ladoTextura,
+  });
   contenedor.append(capa.nav);
   escena3d.alRedimensionar(capa.ubicar);
   escena3d.solicitarRender();
   // Se registra después del render pedido: en el mismo frame corre justo detrás de él
-  requestAnimationFrame(() => {
-    capa.ubicar();
-    contenedor.dataset['escena3d'] = 'lista';
-    emitir('escena3d:lista');
-  });
+  avisarLista(contenedor, capa.ubicar);
   // Los `from()` aplican el estado inicial (luz apagada) antes del primer cuadro
   const intro = animarIntro3d({ luces, fundas, solicitarRender: escena3d.solicitarRender });
   // Si se abre un disco durante la intro, se completa ya: las fundas tienen que estar en su lugar

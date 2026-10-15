@@ -16,7 +16,7 @@ const PAUSAS = [0.52, 0.63, 0.75, 0.86] as const;
 const ANCHO_PAUSA = 0.006;
 const SURCOS_POR_PX = 0.6;
 /** Reflejo del entorno sobre la cara: el brillo que corre por los surcos. */
-const REFLEJO_VINILO = 0.5;
+const REFLEJO_VINILO = 0.25;
 
 function pintarSurcos(contexto: CanvasRenderingContext2D, radio: number, azar: () => number): void {
   const claro = leerToken('--surco-claro');
@@ -60,8 +60,8 @@ function pintorDisco(proyecto: Proyecto): Pintor {
 }
 
 /**
- * Disco del proyecto: cilindro finito con la textura en las dos caras. Rugosidad baja para
- * que los surcos devuelvan el reflejo del spot, como un vinilo de verdad.
+ * Disco del proyecto: cilindro finito con la textura en las dos caras; el brillo de los
+ * surcos viene del entorno de reflejos.
  */
 export function crearDisco3d(
   proyecto: Proyecto,
@@ -73,8 +73,9 @@ export function crearDisco3d(
   );
   const cara = new MeshStandardMaterial({
     map: textura,
-    roughness: 0.32,
-    metalness: 0.1,
+    // Más rugoso que un vinilo real: inclinado, el spot lo dejaba entero color crema
+    roughness: 0.6,
+    metalness: 0,
     envMap: entorno,
     envMapIntensity: REFLEJO_VINILO,
   });
