@@ -72,6 +72,26 @@ a {
   transform: translate(var(--desfase-sombra-chica), var(--desfase-sombra-chica));
 }
 
+/* Variante de texto: en papel impreso (estudio 3D) no van bloques con sombra dura */
+.boton--texto {
+  padding: 0;
+  background: none;
+  border: none;
+  box-shadow: none;
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.boton--texto:hover {
+  background: none;
+  text-decoration-thickness: 2px;
+}
+
+.boton--texto:active {
+  transform: none;
+}
+
 /* currentColor: el contorno contrasta sobre cualquier fondo (cartel, ficha, cabeceras) */
 a:focus-visible,
 button:focus-visible {

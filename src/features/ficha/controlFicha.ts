@@ -24,6 +24,13 @@ function obtenerDesplazamientoInicial(): gsap.TweenVars {
     : { xPercent: ENTRADA_FICHA_PORCENTAJE };
 }
 
+/**
+ * `css`: entra en `vinilo:abriendo` con retraso (el disco CSS sale en 1 s).
+ * `3d`: entra en `vinilo:abierto`, cuando el disco ya gira (la apertura 3D dura ~3 s y
+ * con la ficha encima desde el principio se tapaba el viaje al tocadiscos).
+ */
+type ModoFicha = 'css' | '3d';
+
 interface FichaAbierta {
   readonly elemento: HTMLElement;
   readonly entrada: gsap.core.Tween;
@@ -33,29 +40,54 @@ interface FichaAbierta {
 class ControlFicha {
   private readonly contenedor: HTMLElement;
   private abierta: FichaAbierta | null = null;
+  private modo: ModoFicha = 'css';
 
   constructor(contenedor: HTMLElement) {
     this.contenedor = contenedor;
   }
 
-  /** Entra en `vinilo:abriendo` con retraso: aparece mientras el disco termina de salir. */
-  mostrar(id: string): void {
+  usar3d(): void {
+    this.modo = '3d';
+  }
+
+  alAbrirse(id: string): void {
+    if (this.modo === 'css') {
+      this.mostrar(id, RETRASO_FICHA);
+    }
+  }
+
+  alQuedarAbierto(id: string): void {
+    if (this.modo === '3d') {
+      this.mostrar(id, 0);
+    }
+    this.enfocar();
+  }
+
+  private mostrar(id: string, retraso: number): void {
     this.quitar();
     const proyecto = PROYECTOS.find((candidato) => candidato.id === id);
     if (!proyecto) {
       return;
     }
     const elemento = crearFicha(proyecto);
+    // En el estudio 3D la ficha es una tarjeta impresa ("liner notes"), no un bloque neobrutal
+    if (this.modo === '3d') {
+      elemento.classList.add('ficha--impresa');
+      elemento.querySelectorAll('.boton').forEach((boton) => boton.classList.add('boton--texto'));
+    }
     this.contenedor.append(elemento);
+    // Visible ya (sincrónico) y después solo se anima la opacidad: con `visibility: hidden`
+    // (CSS o `autoAlpha` en 0) el navegador no deja enfocarla al quedar abierto el disco
+    gsap.set(elemento, { visibility: 'visible' });
     const entrada = gsap.fromTo(
       elemento,
-      { autoAlpha: 0, ...obtenerDesplazamientoInicial() },
+      { opacity: 0, ...obtenerDesplazamientoInicial() },
       {
-        autoAlpha: 1,
+        opacity: 1,
         xPercent: 0,
         yPercent: 0,
         duration: DURACION_FICHA,
-        delay: RETRASO_FICHA,
+        delay: retraso,
         ease: EASE_ENTRADA,
         onReverseComplete: () => this.quitar(),
       },
@@ -64,7 +96,7 @@ class ControlFicha {
   }
 
   /** Al terminar la apertura: lectores de pantalla anuncian el título y Tab sigue dentro. */
-  enfocar(): void {
+  private enfocar(): void {
     this.abierta?.elemento.focus();
   }
 
@@ -96,8 +128,9 @@ class ControlFicha {
 export function conectarFicha(contenedor: HTMLElement): () => void {
   const control = new ControlFicha(contenedor);
   return combinarDesconexiones([
-    escuchar('vinilo:abriendo', ({ id }) => control.mostrar(id)),
-    escuchar('vinilo:abierto', () => control.enfocar()),
+    escuchar('vinilo:abriendo', ({ id }) => control.alAbrirse(id)),
+    escuchar('vinilo:abierto', ({ id }) => control.alQuedarAbierto(id)),
     escuchar('vinilo:cerrando', () => control.ocultar()),
+    escuchar('escena3d:lista', () => control.usar3d()),
   ]);
 }

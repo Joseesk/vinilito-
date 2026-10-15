@@ -13,5 +13,10 @@ export function iniciarEscena(contenedor: HTMLElement): void {
   conectarSeleccion(escena, animarIntro(escena));
   conectarEstadoLomos(escena);
   // Con el 3D listo, esta escena queda como placeholder: se oculta la repisa CSS
-  escuchar('escena3d:lista', () => escena.classList.add('escena--sobre-3d'));
+  escuchar('escena3d:lista', () => {
+    escena.classList.add('escena--sobre-3d');
+    escena
+      .querySelectorAll('.cartel__enlace')
+      .forEach((enlace) => enlace.classList.add('boton--texto'));
+  });
 }

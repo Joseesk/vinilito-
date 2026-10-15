@@ -257,22 +257,6 @@
   font-style: italic;
 }
 
-/* Enlaces de texto, no botones: en papel impreso no hay sombras duras */
-.escena--sobre-3d .cartel__enlace {
-  padding: 0;
-  background: none;
-  border: none;
-  box-shadow: none;
-  color: inherit;
-  text-decoration: underline;
-  text-underline-offset: 0.2em;
-}
-
-.escena--sobre-3d .cartel__enlace:hover {
-  background: none;
-  text-decoration-thickness: 2px;
-}
-
 @media (prefers-reduced-motion: reduce) {
   .lomo__cuerpo,
   .lomo__cuerpo::after {

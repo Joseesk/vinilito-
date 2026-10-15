@@ -70,6 +70,55 @@
   background: var(--color-ficha);
 }
 
+/* ---------- Estudio 3D: tarjeta impresa ("liner notes") ---------- */
+
+.ficha--impresa {
+  background: var(--placa-papel);
+  color: var(--placa-tinta);
+  border: none;
+  border-radius: 2px;
+  box-shadow: var(--placa-sombra);
+}
+
+.ficha--impresa .ficha__cabecera {
+  position: relative;
+  padding-top: var(--espacio-l);
+  background: none;
+  color: var(--placa-tinta);
+  border-bottom: 1px solid var(--placa-linea);
+}
+
+/* Franja del color del disco, como el borde impreso de un inserto */
+.ficha--impresa .ficha__cabecera::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 6px;
+  background: var(--color-ficha);
+}
+
+.ficha--impresa .ficha__anio {
+  padding: 0;
+  background: none;
+  border: none;
+  font-variant: small-caps;
+  letter-spacing: 0.2em;
+}
+
+.ficha--impresa .ficha__cerrar {
+  text-decoration: none;
+  opacity: 0.6;
+}
+
+.ficha--impresa .ficha__cerrar:hover {
+  opacity: 1;
+}
+
+.ficha--impresa .ficha__enlace {
+  padding: 0;
+  background: none;
+}
+
 /* El panel recibe foco por código solo para anunciarse; no es interactivo */
 .ficha:focus {
   outline: none;
