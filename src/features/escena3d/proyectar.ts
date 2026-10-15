@@ -15,6 +15,9 @@ export function proyectarPuntos(
   { camara, lienzo }: { readonly camara: Camera; readonly lienzo: HTMLCanvasElement },
 ): Rectangulo {
   objeto.updateWorldMatrix(true, false);
+  // La cámara puede haberse movido sin render de por medio (reencuadre al redimensionar):
+  // `project()` usa su matriz inversa, que si no se actualiza queda la del último cuadro
+  camara.updateMatrixWorld();
   const { left, top, width, height } = lienzo.getBoundingClientRect();
   const xs: number[] = [];
   const ys: number[] = [];

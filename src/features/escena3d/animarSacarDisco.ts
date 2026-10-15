@@ -1,6 +1,6 @@
 import type { PerspectiveCamera } from 'three';
 import { EASE_VINILO, gsap } from '../../shared/animacion';
-import { agregarViajeCamara, VISTA_FUNDA, VISTA_GENERAL } from './camara';
+import { agregarViajeCamara, obtenerVistas } from './camara';
 import type { FundaEnRepisa } from './ubicarFundas';
 
 /** El dedo engancha el borde superior: la funda se inclina sobre su canto frontal. */
@@ -67,11 +67,13 @@ export function crearSacarFunda({
     defaults: { ease: EASE_VINILO },
     onUpdate: solicitarRender,
   });
+  // Vistas adaptadas a la pantalla actual (en un celular vertical la cámara se aleja)
+  const vistas = obtenerVistas(camara.aspect);
   agregarSalidaDeFila(linea, funda);
   agregarPresentacion(linea, funda);
   agregarViajeCamara(
     linea,
-    { camara, desde: VISTA_GENERAL, hasta: VISTA_FUNDA, duracion: TIEMPOS.camara.duracion },
+    { camara, desde: vistas.general, hasta: vistas.funda, duracion: TIEMPOS.camara.duracion },
     TIEMPOS.camara.inicio,
   );
   return linea;

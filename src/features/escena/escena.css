@@ -1,4 +1,5 @@
 .escena {
+  --duracion-cambio-3d: 0.6s;
   --ancho-lomo: clamp(2.75rem, 3.4vw, 3.5rem);
   --alto-lomo: clamp(15rem, 52svh, 26rem);
   /* Cuánto sobresale la tabla a cada lado de la fila de discos */
@@ -14,8 +15,9 @@
   place-items: center;
   min-height: 100svh;
   padding: var(--espacio-xl) var(--espacio-l);
-  background: var(--papel);
+  background-color: var(--papel);
   overflow: hidden;
+  transition: background-color var(--duracion-cambio-3d) ease;
 }
 
 /* ---------- Repisa ---------- */
@@ -217,12 +219,17 @@
 /* Con el estudio 3D listo: fondo transparente, sin repisa CSS y los clicks pasan al 3D
    (salvo en el cartel, que sigue siendo DOM) */
 .escena--sobre-3d {
-  background: transparent;
+  background-color: transparent;
   pointer-events: none;
 }
 
+/* Se desvanece mientras la lámpara del estudio 3D se enciende (sin salto de crema a oscuro) */
 .escena--sobre-3d .repisa {
-  display: none;
+  visibility: hidden;
+  opacity: 0;
+  transition:
+    opacity var(--duracion-cambio-3d) ease,
+    visibility 0s linear var(--duracion-cambio-3d);
 }
 
 .escena--sobre-3d .cartel {

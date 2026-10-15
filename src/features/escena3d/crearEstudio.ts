@@ -11,7 +11,7 @@ import {
 import { PROYECTOS } from '../../data/proyectos';
 import { leerToken } from '../../shared/utils';
 import type { ConfiguracionCalidad } from './calidad';
-import { ubicarCamara, VISTA_GENERAL } from './camara';
+import { obtenerVistas, ubicarCamara } from './camara';
 import { crearRepisa3d, MEDIDAS_REPISA } from './crearRepisa3d';
 import type { Escena3d } from './renderizador';
 import { crearRinconTocadiscos, type RinconTocadiscos } from './rinconTocadiscos';
@@ -94,6 +94,6 @@ export function construirEstudio(
   if (!calidad.sombras) {
     escena.add(crearSombraFalsa(texturas.sombraFalsa));
   }
-  ubicarCamara(camara, VISTA_GENERAL);
+  ubicarCamara(camara, obtenerVistas(camara.aspect).general);
   return { fundas, luces: { spot, ambiente }, rincon };
 }

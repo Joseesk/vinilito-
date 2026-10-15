@@ -1,6 +1,6 @@
 import { type Mesh, type PerspectiveCamera, Vector3 } from 'three';
 import { DURACION_VUELTA_DISCO, EASE_GIRO, gsap } from '../../shared/animacion';
-import { agregarViajeCamara, VISTA_FUNDA, VISTA_TOCADISCOS } from './camara';
+import { agregarViajeCamara, obtenerVistas } from './camara';
 import { MEDIDAS_DISCO } from './crearDisco3d';
 import { MEDIDAS_FUNDA } from './crearFunda3d';
 import type { Tocadiscos } from './crearTocadiscos';
@@ -92,6 +92,7 @@ function agregarViajeAlPlato(
   { disco, tocadiscos, camara }: PiezasDisco,
 ): void {
   const apoyo = calcularApoyo(tocadiscos);
+  const vistas = obtenerVistas(camara.aspect);
   const { viaje, bajada } = T;
   linea.to(
     disco.position,
@@ -108,8 +109,8 @@ function agregarViajeAlPlato(
     linea,
     {
       camara,
-      desde: VISTA_FUNDA,
-      hasta: VISTA_TOCADISCOS,
+      desde: vistas.funda,
+      hasta: vistas.tocadiscos,
       duracion: viaje.duracion + bajada.duracion,
     },
     enT(viaje.inicio),

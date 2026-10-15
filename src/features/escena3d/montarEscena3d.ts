@@ -1,8 +1,10 @@
 import { emitir, escuchar } from '../../shared/eventos';
+import { combinarDesconexiones } from '../../shared/utils';
 import { crearElemento } from '../../shared/utils';
 import type { ConfiguracionCalidad } from './calidad';
 import { conectarAnimadorEstudio } from './animadorEstudio';
 import { crearCapaAccesible } from './capaAccesible';
+import { obtenerVistas, ubicarCamara } from './camara';
 import { construirEstudio } from './crearEstudio';
 import { animarIntro3d } from './intro3d';
 import { crearEscena3d, type Escena3d } from './renderizador';
@@ -31,6 +33,27 @@ function crearFondo(contenedor: HTMLElement, calidad: ConfiguracionCalidad): HTM
   return lienzo;
 }
 
+/**
+ * Al cambiar el tamaño (rotar el celular, achicar la ventana) con todo cerrado, la cámara se
+ * reencuadra para la nueva proporción. Con un disco abierto la maneja su timeline.
+ */
+function mantenerVistaGeneral({ camara, alRedimensionar }: Escena3d): () => void {
+  let hayDiscoAbierto = false;
+  alRedimensionar(() => {
+    if (!hayDiscoAbierto) {
+      ubicarCamara(camara, obtenerVistas(camara.aspect).general);
+    }
+  });
+  return combinarDesconexiones([
+    escuchar('vinilo:abriendo', () => {
+      hayDiscoAbierto = true;
+    }),
+    escuchar('vinilo:cerrado', () => {
+      hayDiscoAbierto = false;
+    }),
+  ]);
+}
+
 /** Tras el primer cuadro: alinea los botones y avisa que la escena CSS puede ceder. */
 function avisarLista(contenedor: HTMLElement, ubicarBotones: () => void): void {
   requestAnimationFrame(() => {
@@ -46,6 +69,8 @@ export function montarEscena3d(
 ): EstudioMontado {
   const escena3d = crearEscena3d(crearFondo(contenedor, calidad), calidad);
   const { fundas, luces, rincon } = construirEstudio(escena3d, calidad);
+  // Antes que los botones: al redimensionar, primero se mueve la cámara y después se alinean
+  mantenerVistaGeneral(escena3d);
   const capa = crearCapaAccesible({ ...escena3d, fundas });
   conectarAnimadorEstudio({
     ...escena3d,
