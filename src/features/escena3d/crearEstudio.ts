@@ -13,6 +13,7 @@ import { leerToken } from '../../shared/utils';
 import type { ConfiguracionCalidad } from './calidad';
 import { crearRepisa3d, MEDIDAS_REPISA } from './crearRepisa3d';
 import type { Escena3d } from './renderizador';
+import { crearRinconTocadiscos, type RinconTocadiscos } from './rinconTocadiscos';
 import { crearTexturasEstudio } from './texturas';
 import { type FundaEnRepisa, ubicarFundas } from './ubicarFundas';
 
@@ -67,11 +68,12 @@ export interface LucesEstudio {
 export interface Estudio {
   readonly fundas: readonly FundaEnRepisa[];
   readonly luces: LucesEstudio;
+  readonly rincon: RinconTocadiscos;
 }
 
 /** Arma la habitación, la luz, la repisa y las fundas; deja la cámara en la vista general. */
 export function construirEstudio(
-  { escena, camara }: Escena3d,
+  { escena, camara, entorno }: Escena3d,
   calidad: ConfiguracionCalidad,
 ): Estudio {
   const texturas = crearTexturasEstudio(calidad.ladoTextura);
@@ -84,10 +86,15 @@ export function construirEstudio(
   escena.add(crearPared(texturas.pared), ambiente, spot, spot.target);
   const { grupo, fundas } = ubicarFundas(PROYECTOS, calidad);
   escena.add(crearRepisa3d(texturas.nogal), grupo);
+  const rincon = crearRinconTocadiscos(escena, {
+    madera: texturas.nogal,
+    zPared: Z_PARED,
+    entorno,
+  });
   if (!calidad.sombras) {
     escena.add(crearSombraFalsa(texturas.sombraFalsa));
   }
   camara.position.set(CAMARA_GENERAL.x, CAMARA_GENERAL.y, CAMARA_GENERAL.z);
   camara.lookAt(0, CAMARA_GENERAL.mirarY, 0);
-  return { fundas, luces: { spot, ambiente } };
+  return { fundas, luces: { spot, ambiente }, rincon };
 }

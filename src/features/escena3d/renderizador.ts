@@ -3,9 +3,12 @@ import {
   Color,
   PCFSoftShadowMap,
   PerspectiveCamera,
+  PMREMGenerator,
   Scene,
+  type Texture,
   WebGLRenderer,
 } from 'three';
+import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { leerToken } from '../../shared/utils';
 import type { ConfiguracionCalidad } from './calidad';
 
@@ -20,6 +23,11 @@ export interface Escena3d {
   readonly escena: Scene;
   readonly camara: PerspectiveCamera;
   readonly lienzo: HTMLCanvasElement;
+  /**
+   * Reflejos generados por código (sin descargar un HDR) para metal y vinilo. Se aplica
+   * como `envMap` solo a esos materiales: como entorno global aclaraba todo el cuarto.
+   */
+  readonly entorno: Texture;
   /** Pide un cuadro. Varios pedidos en el mismo frame se dibujan una sola vez. */
   readonly solicitarRender: () => void;
   /** Avisa cada cambio de tamaño del lienzo (después de ajustar cámara y renderer). */
@@ -62,6 +70,9 @@ export function crearEscena3d(lienzo: HTMLCanvasElement, calidad: ConfiguracionC
   const renderer = crearRenderer(lienzo, calidad);
   const escena = new Scene();
   escena.background = new Color(leerToken('--estudio-pared'));
+  const generador = new PMREMGenerator(renderer);
+  const entorno = generador.fromScene(new RoomEnvironment()).texture;
+  generador.dispose();
   const camara = new PerspectiveCamera(CAMPO_VISION, 1, PLANO_CERCANO, PLANO_LEJANO);
   const solicitarRender = crearDibujante(() => renderer.render(escena, camara));
   const acciones: (() => void)[] = [];
@@ -80,5 +91,5 @@ export function crearEscena3d(lienzo: HTMLCanvasElement, calidad: ConfiguracionC
   const alRedimensionar = (accion: () => void): void => {
     acciones.push(accion);
   };
-  return { escena, camara, lienzo, solicitarRender, alRedimensionar, destruir };
+  return { escena, camara, lienzo, entorno, solicitarRender, alRedimensionar, destruir };
 }

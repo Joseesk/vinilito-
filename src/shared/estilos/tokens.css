@@ -33,6 +33,12 @@
   --nogal: #3e2716;
   --nogal-veta: #160b05;
   --metal-oscuro: #2b2b2b;
+  --metal-plateado: #c9c9c9;
+  --fieltro: #1c1c1c;
+  /* Surcos del vinilo 3D: anillos apenas más claros y más oscuros que la base */
+  --surco-claro: #262626;
+  --surco-oscuro: #050505;
+  --estudio-luz-tenue: #ffc98a;
   /* Motas para texturas procedurales: casi invisibles, solo rompen lo liso */
   --textura-luz: rgba(255, 255, 255, 0.035);
   --textura-sombra: rgba(0, 0, 0, 0.07);
