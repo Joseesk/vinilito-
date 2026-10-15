@@ -1,16 +1,27 @@
+import { PISTAS } from '../../data/musica';
+import type { Pista } from '../../shared/types/musica';
 import type { Proyecto } from '../../shared/types/proyecto';
 import { crearElemento, crearImagen, obtenerDominio } from '../../shared/utils';
+import { crearBotonSonido, crearCredito } from './sonido';
 
 const ID_TITULO = 'ficha-titulo';
 /** Tamaño intrínseco 16:10, igual que el `aspect-ratio` del CSS: reserva el alto antes de cargar. */
 const CAPTURA_PX = { ancho: 800, alto: 500 } as const;
 
-function crearCabecera(proyecto: Proyecto): HTMLDivElement {
+/** Qué necesita la ficha de la música: la pista del disco (si tiene) y si está silenciada. */
+interface SonidoFicha {
+  readonly pista: Pista | undefined;
+  readonly silenciada: boolean;
+}
+
+function crearCabecera(proyecto: Proyecto, { pista, silenciada }: SonidoFicha): HTMLDivElement {
   return crearElemento('div', {
     clases: ['ficha__cabecera'],
     hijos: [
       crearElemento('span', { clases: ['ficha__numero'], texto: String(proyecto.numero) }),
       crearElemento('span', { clases: ['ficha__anio'], texto: String(proyecto.anio) }),
+      // Solo con música: el botón aparece justo cuando el disco suena
+      ...(pista ? [crearBotonSonido(silenciada)] : []),
       crearElemento('button', {
         clases: ['ficha__cerrar', 'boton'],
         texto: '×',
@@ -41,7 +52,7 @@ function crearCaptura(proyecto: Proyecto): HTMLElement {
   return crearElemento('figure', { clases: ['ficha__captura'], hijos: [barra, imagen] });
 }
 
-function crearCuerpo(proyecto: Proyecto): HTMLDivElement {
+function crearCuerpo(proyecto: Proyecto, pista: Pista | undefined): HTMLDivElement {
   return crearElemento('div', {
     clases: ['ficha__cuerpo'],
     hijos: [
@@ -57,11 +68,13 @@ function crearCuerpo(proyecto: Proyecto): HTMLDivElement {
         texto: 'Ver proyecto →',
         atributos: { href: proyecto.enlace, target: '_blank', rel: 'noopener noreferrer' },
       }),
+      ...(pista ? [crearCredito(pista)] : []),
     ],
   });
 }
 
-export function crearFicha(proyecto: Proyecto): HTMLElement {
+export function crearFicha(proyecto: Proyecto, silenciada: boolean): HTMLElement {
+  const pista = PISTAS[proyecto.numero];
   return crearElemento('aside', {
     clases: ['ficha'],
     atributos: {
@@ -70,6 +83,6 @@ export function crearFicha(proyecto: Proyecto): HTMLElement {
       tabindex: '-1',
       style: `--color-ficha: var(--${proyecto.color})`,
     },
-    hijos: [crearCabecera(proyecto), crearCuerpo(proyecto)],
+    hijos: [crearCabecera(proyecto, { pista, silenciada }), crearCuerpo(proyecto, pista)],
   });
 }

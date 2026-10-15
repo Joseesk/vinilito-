@@ -1,5 +1,10 @@
-import { crearElemento, debeCargar3d, type SenalesDispositivo } from '../../shared/utils';
-import { detectarCalidad, leerSenales } from './calidad';
+import {
+  crearElemento,
+  debeCargar3d,
+  leerSenales,
+  type SenalesDispositivo,
+} from '../../shared/utils';
+import { detectarCalidad } from './calidad';
 
 /** Safari no tiene `requestIdleCallback`: se espera un poco para no competir con la intro. */
 const ESPERA_SIN_IDLE_MS = 300;

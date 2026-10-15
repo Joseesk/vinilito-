@@ -2,7 +2,12 @@ import { type Camera, Vector3 } from 'three';
 import { PROYECTOS } from '../../data/proyectos';
 import { gsap, prefiereMenosMovimiento } from '../../shared/animacion';
 import { emitir, escuchar } from '../../shared/eventos';
-import { combinarDesconexiones, crearElemento, devolverFocoSiSePerdio } from '../../shared/utils';
+import {
+  combinarDesconexiones,
+  crearElemento,
+  devolverFocoSiSePerdio,
+  medirElemento,
+} from '../../shared/utils';
 import { proyectarPuntos } from './proyectar';
 import type { FundaEnRepisa } from './ubicarFundas';
 
@@ -41,11 +46,7 @@ function crearBoton(funda: FundaEnRepisa): HTMLButtonElement {
     },
   });
   boton.addEventListener('click', () => {
-    const { left, top, width, height } = boton.getBoundingClientRect();
-    emitir('proyecto:seleccionado', {
-      id: funda.id,
-      origen: { x: left, y: top, ancho: width, alto: height },
-    });
+    emitir('proyecto:seleccionado', { id: funda.id, origen: medirElemento(boton) });
   });
   return boton;
 }

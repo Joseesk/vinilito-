@@ -9,7 +9,7 @@ import {
   prefiereMenosMovimiento,
 } from '../../shared/animacion';
 import type { Rectangulo } from '../../shared/types/eventos';
-import { obtenerElemento } from '../../shared/utils';
+import { calcularFlip, medirElemento, obtenerElemento } from '../../shared/utils';
 
 /** La funda arranca casi de canto: a 80° y a escala del lomo se ve tan angosta como él. */
 const GIRO_FUNDA_CANTO = 80;
@@ -33,13 +33,7 @@ export interface AvisosApertura {
 
 /** FLIP: lleva la funda (ya en su lugar final) al rectángulo del lomo clickeado. */
 function calcularDesdeOrigen(funda: HTMLElement, origen: Rectangulo): gsap.TweenVars {
-  const destino = funda.getBoundingClientRect();
-  return {
-    x: origen.x + origen.ancho / 2 - (destino.left + destino.width / 2),
-    y: origen.y + origen.alto / 2 - (destino.top + destino.height / 2),
-    scale: origen.alto / destino.height,
-    rotationY: GIRO_FUNDA_CANTO,
-  };
+  return { ...calcularFlip(origen, medirElemento(funda)), rotationY: GIRO_FUNDA_CANTO };
 }
 
 function obtenerSalidaDisco(): gsap.TweenVars {

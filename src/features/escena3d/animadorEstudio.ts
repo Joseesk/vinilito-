@@ -57,17 +57,18 @@ class AnimadorEstudio {
     linea.eventCallback('onComplete', () => emitir('animacion:abierta', { id }));
     linea.eventCallback('onReverseComplete', () => this.terminarCierre());
     this.sesion = { id, linea, completa, giro, temporales };
-    void aplicarPortada(proyecto.portada, {
-      materialPortada: funda.malla.material[0],
-      alAplicar: this.piezas.solicitarRender,
-    });
     linea.timeScale(1).play();
   }
 
   /** Disco y funda interna se crean por apertura; con movimiento reducido, fundido. */
   private armar(funda: FundaEnRepisa, proyecto: Proyecto): Omit<Sesion, 'id'> {
     const { escena, entorno, ladoTextura, tocadiscos, lienzo } = this.piezas;
-    const disco = crearDisco3d(proyecto, { ladoTextura, entorno });
+    const { malla: disco, materialEtiqueta } = crearDisco3d(proyecto, { ladoTextura, entorno });
+    // Una sola descarga: la misma portada va a la funda y a la etiqueta del disco
+    void aplicarPortada(proyecto.portada, {
+      materiales: [funda.malla.material[0], materialEtiqueta],
+      alAplicar: this.piezas.solicitarRender,
+    });
     const interna = crearFundaInterna(ladoTextura);
     escena.add(disco);
     funda.malla.add(interna);

@@ -92,6 +92,27 @@ a {
   transform: none;
 }
 
+/* Ícono como máscara: sin descargas y toma el color del texto. Cada feature define el dibujo
+   (`--icono`) en su `.boton__icono--<nombre>` */
+.boton__icono {
+  flex: none;
+  width: 1.25em;
+  height: 1.25em;
+  background: currentColor;
+  -webkit-mask: var(--icono) center / contain no-repeat;
+  mask: var(--icono) center / contain no-repeat;
+}
+
+/* Oculto a la vista, no a los lectores de pantalla (p. ej. el nombre de un enlace con logo) */
+.solo-lectores {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 /* currentColor: el contorno contrasta sobre cualquier fondo (cartel, ficha, cabeceras) */
 a:focus-visible,
 button:focus-visible {

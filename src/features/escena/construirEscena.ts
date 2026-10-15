@@ -1,6 +1,7 @@
 import type { Perfil } from '../../shared/types/perfil';
 import type { Proyecto } from '../../shared/types/proyecto';
 import { crearElemento } from '../../shared/utils';
+import { crearBotonWhatsapp } from './botonWhatsapp';
 import { crearLomo } from './crearLomo';
 import { crearCartel } from './crearCartel';
 
@@ -19,8 +20,10 @@ function crearRepisa(proyectos: readonly Proyecto[]): HTMLDivElement {
 }
 
 export function construirEscena(proyectos: readonly Proyecto[], perfil: Perfil): HTMLElement {
+  // El flotante (oculto hasta abrir un disco) va al final: visible, queda antes de la ficha en el Tab
+  const flotante = crearBotonWhatsapp(perfil.whatsapp, ['whatsapp-flotante']);
   return crearElemento('main', {
     clases: ['escena'],
-    hijos: [crearCartel(perfil), crearRepisa(proyectos)],
+    hijos: [crearCartel(perfil), crearRepisa(proyectos), flotante],
   });
 }

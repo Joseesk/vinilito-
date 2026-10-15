@@ -7,6 +7,12 @@ export const DURACION_FICHA = 0.5;
 export const RETRASO_FICHA = 0.3;
 /** Una vuelta a 33⅓ rpm, como un vinilo real. */
 export const DURACION_VUELTA_DISCO = 1.8;
+/** Cuánto queda visible un aviso breve (p. ej. "¡Copiado!"): leerlo sin que estorbe. */
+export const DURACION_AVISO = 2;
+/** Fundido de la música al bajar la aguja y al guardar el disco: entra y sale sin golpe. */
+export const DURACION_FUNDIDO_MUSICA = 1;
+/** Música y crepitar se cortan casi en seco al levantar la aguja (sin golpe digital). */
+export const DURACION_CORTE_AGUJA = 0.1;
 
 /** Con 5 lomos la intro completa queda bajo los 2 s. */
 export const STAGGER_LOMOS = 0.12;

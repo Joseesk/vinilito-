@@ -17,10 +17,15 @@ export function esRedLenta(senales: SenalesDispositivo): boolean {
   return senales.tipoRed !== undefined && REDES_LENTAS.includes(senales.tipoRed);
 }
 
-/** Con "ahorro de datos" o red 2G no se descarga la escena 3D (~150 KB): queda la versión CSS. */
-export function debeCargar3d(senales: SenalesDispositivo): boolean {
+/** "Ahorro de datos" activado o red 2G: no se descarga nada que no sea imprescindible. */
+export function debeAhorrarDatos(senales: SenalesDispositivo): boolean {
   const esRedMuyLenta = senales.tipoRed === 'slow-2g' || senales.tipoRed === '2g';
-  return senales.ahorroDatos !== true && !esRedMuyLenta;
+  return senales.ahorroDatos === true || esRedMuyLenta;
+}
+
+/** Ahorrando datos no se descarga la escena 3D (~150 KB): queda la versión CSS. */
+export function debeCargar3d(senales: SenalesDispositivo): boolean {
+  return !debeAhorrarDatos(senales);
 }
 
 /** Ante la duda, `baja`: un celular modesto con calidad alta se traba, uno potente con baja no. */

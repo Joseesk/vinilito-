@@ -1,6 +1,6 @@
 import { emitir } from '../../shared/eventos';
 import type { Proyecto } from '../../shared/types/proyecto';
-import { crearElemento } from '../../shared/utils';
+import { crearElemento, medirElemento } from '../../shared/utils';
 
 function crearFrente(proyecto: Proyecto): HTMLSpanElement {
   return crearElemento('span', {
@@ -30,9 +30,7 @@ export function crearLomo(proyecto: Proyecto): HTMLButtonElement {
     hijos: [cuerpo],
   });
   lomo.addEventListener('click', () => {
-    const { left, top, width, height } = lomo.getBoundingClientRect();
-    const origen = { x: left, y: top, ancho: width, alto: height };
-    emitir('proyecto:seleccionado', { id: proyecto.id, origen });
+    emitir('proyecto:seleccionado', { id: proyecto.id, origen: medirElemento(lomo) });
   });
   return lomo;
 }

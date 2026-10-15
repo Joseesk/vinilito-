@@ -8,6 +8,7 @@ import {
 import { escuchar } from '../../shared/eventos';
 import { combinarDesconexiones, obtenerElemento } from '../../shared/utils';
 import type { PayloadProyecto } from '../../shared/types/eventos';
+import { agregarViajeWhatsapp } from './botonWhatsapp';
 import { PROPIEDADES_ANIMADAS } from './constantes';
 import { buscarLomo, obtenerLomos } from './lomos';
 
@@ -21,19 +22,20 @@ function crearSeleccion(escena: HTMLElement, id: string): gsap.core.Timeline | n
   if (!elegido) {
     return null;
   }
-  // El cartel también se atenúa: con un disco abierto, el resto de la pared es fondo
-  const otros = [
-    ...obtenerLomos(escena).filter((lomo) => lomo !== elegido),
-    obtenerElemento('.cartel', escena),
-  ];
+  const otros = obtenerLomos(escena).filter((lomo) => lomo !== elegido);
+  const cartel = obtenerElemento('.cartel', escena);
+  const flotante = obtenerElemento('.whatsapp-flotante', escena);
   const linea = gsap.timeline({
     defaults: { duration: DURACION_APERTURA, ease: EASE_VINILO },
     onReverseComplete: () => {
       linea.kill();
-      gsap.set([elegido, ...otros], { clearProps: PROPIEDADES_ANIMADAS });
+      gsap.set([elegido, ...otros, cartel, flotante], { clearProps: PROPIEDADES_ANIMADAS });
     },
   });
   linea.to(otros, { opacity: OPACIDAD_ATENUADA }, 0);
+  // Con un disco abierto la pared es fondo: el cartel se apaga y solo queda el WhatsApp
+  agregarViajeWhatsapp(linea, { origen: obtenerElemento('.cartel__whatsapp', cartel), flotante });
+  linea.to(cartel, { autoAlpha: 0 }, 0);
   // Desaparece en la misma duración que gira la funda: se lee como que el lomo "es" la funda
   const salida = prefiereMenosMovimiento()
     ? { opacity: 0 }

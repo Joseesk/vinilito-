@@ -15,6 +15,11 @@ export interface PayloadSeleccion extends PayloadProyecto {
   readonly origen: Rectangulo;
 }
 
+/** Lo publica la música (al iniciar y al cambiar); lo refleja el botón de la ficha. */
+export interface PayloadSonido {
+  readonly silenciada: boolean;
+}
+
 /** Mapa de eventos entre features (sección 1 de sprint.md). `undefined` = sin payload. */
 export interface EventosApp {
   'proyecto:seleccionado': PayloadSeleccion;
@@ -29,6 +34,9 @@ export interface EventosApp {
   'animacion:cerrada': PayloadProyecto;
   /** El estudio 3D ya dibujó: la escena CSS cede la repisa (queda el cartel). */
   'escena3d:lista': undefined;
+  /** Botón de la ficha: silenciar / activar la música. */
+  'musica:alternar': undefined;
+  'musica:estado': PayloadSonido;
 }
 
 export type NombreEvento = keyof EventosApp;

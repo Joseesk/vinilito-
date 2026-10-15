@@ -12,6 +12,7 @@ import type { Proyecto } from '../../shared/types/proyecto';
 import { combinarDesconexiones, precargarImagen } from '../../shared/utils';
 import { conectarCierre } from './cerrarFicha';
 import { crearFicha } from './crearFicha';
+import { actualizarBotonSonido } from './sonido';
 
 const ENTRADA_FICHA_PORCENTAJE = 12;
 
@@ -46,9 +47,19 @@ class ControlFicha {
   private readonly contenedor: HTMLElement;
   private abierta: FichaAbierta | null = null;
   private modo: ModoFicha = 'css';
+  /** Último `musica:estado`: la ficha nueva nace con el botón de sonido correcto. */
+  private silenciada = false;
 
   constructor(contenedor: HTMLElement) {
     this.contenedor = contenedor;
+  }
+
+  alCambiarSonido(silenciada: boolean): void {
+    this.silenciada = silenciada;
+    const boton = this.abierta?.elemento.querySelector<HTMLElement>('.ficha__sonido');
+    if (boton) {
+      actualizarBotonSonido(boton, silenciada);
+    }
   }
 
   usar3d(): void {
@@ -80,7 +91,7 @@ class ControlFicha {
     if (!proyecto) {
       return;
     }
-    const elemento = crearFicha(proyecto);
+    const elemento = crearFicha(proyecto, this.silenciada);
     // En el estudio 3D la ficha es una tarjeta impresa ("liner notes"), no un bloque neobrutal
     if (this.modo === '3d') {
       elemento.classList.add('ficha--impresa');
@@ -149,5 +160,6 @@ export function conectarFicha(contenedor: HTMLElement): () => void {
     escuchar('vinilo:abierto', ({ id }) => control.alQuedarAbierto(id)),
     escuchar('vinilo:cerrando', () => control.ocultar()),
     escuchar('escena3d:lista', () => control.usar3d()),
+    escuchar('musica:estado', ({ silenciada }) => control.alCambiarSonido(silenciada)),
   ]);
 }

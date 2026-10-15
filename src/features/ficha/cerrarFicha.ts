@@ -6,8 +6,10 @@ import { obtenerElemento } from '../../shared/utils';
  * `aria-expanded`) no cuenta como "fuera": lo resuelve la máquina de estados del vinilo
  * (mismo lomo = cerrar, otro = cambiar de proyecto). Además ese mismo click es el que abrió
  * la ficha y sigue subiendo hasta `document` cuando este listener ya está registrado.
+ * `data-mantiene-abierto`: acciones que conviven con el disco abierto (p. ej. el WhatsApp
+ * flotante), sin que la ficha tenga que conocer a la feature que las crea.
  */
-const SELECTOR_DISPARADOR = '[aria-expanded]';
+const SELECTOR_DISPARADOR = '[aria-expanded], [data-mantiene-abierto]';
 
 function esClickFuera(evento: MouseEvent, ficha: HTMLElement): boolean {
   const destino = evento.target;

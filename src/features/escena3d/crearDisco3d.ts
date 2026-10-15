@@ -1,4 +1,4 @@
-import { CylinderGeometry, Mesh, MeshStandardMaterial, type Texture } from 'three';
+import { CylinderGeometry, Mesh, MeshStandardMaterial, RingGeometry, type Texture } from 'three';
 import type { Proyecto } from '../../shared/types/proyecto';
 import { entre, leerToken } from '../../shared/utils';
 import { crearTextura, type Pintor } from './texturas';
@@ -17,6 +17,8 @@ const ANCHO_PAUSA = 0.006;
 const SURCOS_POR_PX = 0.6;
 /** Reflejo del entorno sobre la cara: el brillo que corre por los surcos. */
 const REFLEJO_VINILO = 0.25;
+/** La etiqueta es papel impreso: mate, sin el brillo del vinilo. */
+const RUGOSIDAD_PAPEL = 0.8;
 
 function pintarSurcos(contexto: CanvasRenderingContext2D, radio: number, azar: () => number): void {
   const claro = leerToken('--surco-claro');
@@ -59,6 +61,36 @@ function pintorDisco(proyecto: Proyecto): Pintor {
   };
 }
 
+export interface Disco3d {
+  readonly malla: Mesh;
+  /** Oculto hasta que llega la portada (`aplicarPortada`): mientras, se ve la etiqueta pintada. */
+  readonly materialEtiqueta: MeshStandardMaterial;
+}
+
+/**
+ * Etiqueta con la portada en las dos caras: un aro (con el agujero del eje) apenas encima de
+ * la textura. Las UV del aro cubren su cuadrado: la portada se recorta en círculo sin deformarse.
+ */
+function agregarEtiquetas(disco: Mesh): MeshStandardMaterial {
+  const { radio, espesor } = MEDIDAS_DISCO;
+  const geometria = new RingGeometry(radio * RADIO_AGUJERO, radio * RADIO_ETIQUETA, SEGMENTOS);
+  const material = new MeshStandardMaterial({
+    roughness: RUGOSIDAD_PAPEL,
+    visible: false,
+    // Coplanar con la cara del disco: el desfase evita el parpadeo entre las dos superficies
+    polygonOffset: true,
+    polygonOffsetFactor: -1,
+  });
+  // El aro nace mirando a +z: se acuesta sobre cada cara del cilindro (eje y)
+  [1, -1].forEach((lado) => {
+    const etiqueta = new Mesh(geometria, material);
+    etiqueta.rotation.x = -lado * (Math.PI / 2);
+    etiqueta.position.y = lado * (espesor / 2);
+    disco.add(etiqueta);
+  });
+  return material;
+}
+
 /**
  * Disco del proyecto: cilindro finito con la textura en las dos caras; el brillo de los
  * surcos viene del entorno de reflejos.
@@ -66,7 +98,7 @@ function pintorDisco(proyecto: Proyecto): Pintor {
 export function crearDisco3d(
   proyecto: Proyecto,
   { ladoTextura, entorno }: { readonly ladoTextura: number; readonly entorno: Texture },
-): Mesh {
+): Disco3d {
   const textura = crearTextura(
     { ancho: ladoTextura, alto: ladoTextura, semilla: proyecto.numero * 31 },
     pintorDisco(proyecto),
@@ -89,5 +121,5 @@ export function crearDisco3d(
     ),
     [canto, cara, cara],
   );
-  return disco;
+  return { malla: disco, materialEtiqueta: agregarEtiquetas(disco) };
 }

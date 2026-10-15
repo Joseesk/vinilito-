@@ -19,6 +19,8 @@ function pedirPortada(url: string): Promise<Texture | null> {
     .loadAsync(url)
     .then((textura) => {
       textura.colorSpace = SRGBColorSpace;
+      // La comparten la funda y cada disco que se abre: liberarMalla() no la toca
+      textura.userData['compartida'] = true;
       return textura;
     })
     // Sin imagen (aún no hay portadas, o falla la red) queda la portada impresa
@@ -28,21 +30,28 @@ function pedirPortada(url: string): Promise<Texture | null> {
 }
 
 /**
- * Carga la portada real solo al abrir ese disco (pensado para conexiones lentas) y la pone
- * en las caras de portada de la funda. `materialPortada` es el que comparten ±x.
+ * Carga la portada real solo al abrir ese disco (pensado para conexiones lentas) y la pone en
+ * cada material: las caras ±x de la funda y la etiqueta del disco. Los materiales ocultos
+ * (la etiqueta, mientras no hay imagen) se muestran al recibirla.
  */
 export async function aplicarPortada(
   url: string,
   {
-    materialPortada,
+    materiales,
     alAplicar,
-  }: { readonly materialPortada: Material | undefined; readonly alAplicar: () => void },
+  }: { readonly materiales: readonly (Material | undefined)[]; readonly alAplicar: () => void },
 ): Promise<void> {
   const textura = await pedirPortada(url);
-  if (!textura || !(materialPortada instanceof MeshStandardMaterial)) {
+  if (!textura) {
     return;
   }
-  materialPortada.map = textura;
-  materialPortada.needsUpdate = true;
+  materiales.forEach((material) => {
+    if (!(material instanceof MeshStandardMaterial)) {
+      return;
+    }
+    material.map = textura;
+    material.visible = true;
+    material.needsUpdate = true;
+  });
   alAplicar();
 }

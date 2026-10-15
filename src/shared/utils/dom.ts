@@ -1,3 +1,5 @@
+import type { Rectangulo } from '../types/eventos';
+
 export interface OpcionesElemento {
   readonly clases?: readonly string[];
   readonly atributos?: Readonly<Record<string, string>>;
@@ -55,6 +57,23 @@ export function crearImagen(src: string, opciones: OpcionesImagen): HTMLImageEle
 /** Pide la imagen sin mostrarla: queda en la caché del navegador para cuando se use. */
 export function precargarImagen(src: string): void {
   crearElemento('img', { atributos: { src } });
+}
+
+/**
+ * Ícono decorativo (`aria-hidden`) dibujado como máscara CSS: `.boton__icono--<nombre>` define
+ * el dibujo en el CSS de cada feature. El nombre accesible lo da el texto del botón o enlace.
+ */
+export function crearIcono(nombre: string): HTMLSpanElement {
+  return crearElemento('span', {
+    clases: ['boton__icono', `boton__icono--${nombre}`],
+    atributos: { 'aria-hidden': 'true' },
+  });
+}
+
+/** Rectángulo en pantalla como dato (para eventos y FLIP), no como `DOMRect`. */
+export function medirElemento(elemento: Element): Rectangulo {
+  const { left, top, width, height } = elemento.getBoundingClientRect();
+  return { x: left, y: top, ancho: width, alto: height };
 }
 
 /** Lanza error si no existe: un nodo faltante es un bug de maquetado, no un caso a tolerar. */
